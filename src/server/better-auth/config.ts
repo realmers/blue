@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { username } from "better-auth/plugins"
+import { username } from "better-auth/plugins";
 
 import { hash, verify } from "argon2";
 

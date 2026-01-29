@@ -98,6 +98,10 @@ async function main() {
       await db.account.create({
         data: {
           userId: p.person_id,
+          // NOTE: For the "credential" provider we don't have a separate external account
+          // identifier from the legacy system. We intentionally reuse the primary key
+          // (person_id) as the accountId (stringified). better-auth only requires that
+          // (providerId, accountId) is unique, so duplicating userId here is by design.
           accountId: p.person_id.toString(),
           providerId: "credential",
           password: hashedPassword,
