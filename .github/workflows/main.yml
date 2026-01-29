@@ -1,0 +1,45 @@
+name: T3 Stack CI 
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    # 1. Provide "Dummy" Env Vars for the T3 safety check
+    env:
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/unused"
+      BETTER_AUTH_SECRET: "this_is_a_very_long_test_secret_123456789"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm' 
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm prisma generate 
+
+      #- name: Run Linting
+        #run: pnpm run lint
+
+      - name: Type Check
+        run: npx tsc --noEmit
+
+      - name: Production Build Check
+        # This is the "CD readiness" test
+        run: pnpm run build
