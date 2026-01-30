@@ -10,71 +10,146 @@ generator client {
   importFileExtension    = "ts"
 }
 
-// NOTE: When using mysql or sqlserver, uncomment the //@db.Text annotations in model Account below
-// Further reading:
-// https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-
 datasource db {
   provider = "postgresql"
 }
 
-
 model User {
-  id            String    @id
-  name          String //@db.Text
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String? //@db.Text
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-  sessions      Session[]
-  accounts      Account[]
+  id            Int      @id @default(autoincrement()) // Matches legacy person_id
+  name          String
+  email         String?  @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
 
-  @@unique([email])
+  // Legacy Fields Merged
+
+  username String? @unique
+  surname  String?
+  pnr      String?
+  role_id  Int?
+
+  sessions           Session[]
+  accounts           Account[]
+  role               role?                @relation(fields: [role_id], references: [role_id])
+  availability       availability[]
+  competence_profile competence_profile[]
+
+  displayUsername String?
+
   @@map("user")
 }
 
 model Session {
-  id        String   @id
+  id        String   @id @default(cuid())
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  ipAddress String? //@db.Text
-  userAgent String? //@db.Text
-  userId    String
+  ipAddress String?
+  userAgent String?
+  userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@map("session")
+  @@index([userId])
 }
 
 model Account {
-  id                    String    @id
-  accountId             String //@db.Text
-  providerId            String //@db.Text
-  userId                String
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                Int
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String? //@db.Text
-  refreshToken          String? //@db.Text
-  idToken               String? //@db.Text
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
   accessTokenExpiresAt  DateTime?
   refreshTokenExpiresAt DateTime?
-  scope                 String? //@db.Text
-  password              String? //@db.Text
+  scope                 String?
+  password              String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
   @@map("account")
+  @@index([userId])
 }
 
 model Verification {
-  id         String   @id
-  identifier String //@db.Text
-  value      String //@db.Text
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
   expiresAt  DateTime
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+  updatedAt  DateTime @updatedAt
 
   @@map("verification")
+  @@index([identifier])
+}
+
+// New Domain Tables
+
+model availability {
+  availability_id Int       @id @default(autoincrement())
+  person_id       Int?
+  from_date       DateTime? @db.Date
+  to_date         DateTime? @db.Date
+  person          User?     @relation(fields: [person_id], references: [id], onDelete: Cascade)
+}
+
+model competence {
+  competence_id      Int                  @id @default(autoincrement())
+  name               String?              @db.VarChar(255)
+  competence_profile competence_profile[]
+}
+
+model competence_profile {
+  competence_profile_id Int         @id @default(autoincrement())
+  person_id             Int?
+  competence_id         Int?
+  years_of_experience   Decimal?    @db.Decimal(4, 2)
+  competence            competence? @relation(fields: [competence_id], references: [competence_id], onDelete: NoAction, onUpdate: NoAction)
+  person                User?       @relation(fields: [person_id], references: [id], onDelete: Cascade)
+}
+
+model role {
+  role_id Int     @id @default(autoincrement())
+  name    String? @db.VarChar(255)
+  users   User[]
+}
+
+model legacy_availability {
+  availability_id Int       @id(map: "legacy_availability_pkey") @default(autoincrement())
+  person_id       Int?
+  from_date       DateTime? @db.Date
+  to_date         DateTime? @db.Date
+}
+
+model legacy_competence {
+  competence_id Int     @id(map: "legacy_competence_pkey") @default(autoincrement())
+  name          String? @db.VarChar(255)
+}
+
+model legacy_competence_profile {
+  competence_profile_id Int      @id(map: "legacy_competence_profile_pkey") @default(autoincrement())
+  person_id             Int?
+  competence_id         Int?
+  years_of_experience   Decimal? @db.Decimal(4, 2)
+}
+
+model legacy_person {
+  person_id Int     @id(map: "legacy_person_pkey") @default(autoincrement())
+  name      String? @db.VarChar(255)
+  surname   String? @db.VarChar(255)
+  pnr       String? @db.VarChar(255)
+  email     String? @db.VarChar(255)
+  password  String? @db.VarChar(255)
+  role_id   Int?
+  username  String? @db.VarChar(255)
+}
+
+model legacy_role {
+  role_id Int     @id(map: "legacy_role_pkey") @default(autoincrement())
+  name    String? @db.VarChar(255)
 }
