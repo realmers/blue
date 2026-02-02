@@ -1,8 +1,5 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { username } from "better-auth/plugins";
-
-import { hash, verify } from "argon2";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
@@ -13,19 +10,7 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    password: {
-      // override default scrypt with argon2
-      hash: async (password) => {
-        return await hash(password);
-      },
-      verify: async ({ password, hash: storedHash }) => {
-        return await verify(storedHash, password);
-      },
-    },
   },
-  plugins: [
-    username()
-  ],
   socialProviders: {
   },
   session: {
@@ -35,12 +20,6 @@ export const auth = betterAuth({
   cookies: {
     secure: env.NODE_ENV === "production",
   },
-  advanced: {
-    database: {
-      generateId: "serial" // use serial ids for users due to legacy database
-    }
-  },
-
 });
 
 export type Session = typeof auth.$Infer.Session;
