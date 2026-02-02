@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:latest 
+    container_name: blue-postgres 
+    restart: unless-stopped 
+    environment:
+      # These are read directly from the .env file by Docker Compose
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test 
+      POSTGRES_DB: blue
+    ports:
+      # Map host port (from .env) to container port 5432
+      - "5433:5432"
+    volumes:
+      # Persist database data using a named volume
+      - blue_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # Check if the database is ready to accept connections
+      test: ["CMD-SHELL", "pg_isready -U postgres -d blue "]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  blue_postgres_data:
+    driver: local 
