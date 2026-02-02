@@ -1,5 +1,6 @@
 "use client";
 
+import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/server/better-auth/client";
@@ -16,6 +17,11 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
+const SignInSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters long"),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
+});
+
 export default function SignInPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -26,16 +32,25 @@ export default function SignInPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    const validation = SignInSchema.safeParse({ username, password });
+
+    if (!validation.success) {
+      const [firstIssue] = validation.error.issues;
+      setError(firstIssue?.message ?? "Invalid input");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await authClient.signIn.username({ username, password });
-      if (res?.error) {
+      if (res.error) {
         setError(res.error.message ?? "Sign in failed");
       } else {
         router.push("/");
       }
     } catch (err: any) {
-      setError(err?.message ?? "Unexpected error");
+      setError(err.message || "Unexpected error");
     } finally {
       setLoading(false);
     }
@@ -53,7 +68,7 @@ export default function SignInPage() {
               Enter your credentials to access your recruitment dashboard
             </CardDescription>
           </CardHeader>
-          
+
           <form onSubmit={onSubmit}>
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
@@ -87,18 +102,18 @@ export default function SignInPage() {
             </CardContent>
 
             <CardFooter className="flex flex-col gap-4 mt-4">
-              <Button 
-                type="submit" 
-                className="w-full bg-black text-white hover:bg-slate-800" 
+              <Button
+                type="submit"
+                className="w-full bg-black text-white hover:bg-slate-800"
                 disabled={loading}
               >
                 {loading ? "Signing in..." : "Sign in"}
               </Button>
-              
+
               <div className="text-center text-sm text-slate-600">
                 Don&apos;t have an account?{" "}
-                <Link 
-                  href="/auth/sign-up" 
+                <Link
+                  href="/auth/sign-up"
                   className="font-medium text-slate-900 underline underline-offset-4 hover:text-slate-700"
                 >
                   Create account
