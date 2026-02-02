@@ -1,7 +1,7 @@
 import { env } from '@/env';
 import pino from 'pino';
 
-// Use a singleton pattern to avoid re-creating loggers
+// Use a singleton pattern to avoid re-creating loggers (especially in HMR/Dev)
 const globalForLogger = globalThis as unknown as { logger: pino.Logger };
 
 export const logger =
