@@ -1,6 +1,5 @@
 "use client";
 
-import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/server/better-auth/client";
@@ -17,11 +16,6 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
-const SignInSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters long"),
-  password: z.string().min(6, "Password must be at least 6 characters long"),
-});
-
 export default function SignInPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -32,16 +26,8 @@ export default function SignInPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-
-    const validation = SignInSchema.safeParse({ username, password });
-
-    if (!validation.success) {
-      const [firstIssue] = validation.error.issues;
-      setError(firstIssue?.message ?? "Invalid input");
-      return;
-    }
-
     setLoading(true);
+    
     try {
       const res = await authClient.signIn.username({ username, password });
       if (res.error) {
