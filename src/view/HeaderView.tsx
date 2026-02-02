@@ -40,22 +40,6 @@ export const HeaderView = () => {
                   Somewhere3
                 </Link>
               </li>
-
-              {/* Protected Links - Required for Use Cases & Task 6  */}
-              {isLoggedIn && userRole === 'recruiter' && (
-                <li>
-                  <Link href="/applications" className="text-blue-400 hover:text-blue-300 transition-colors">
-                    Applications
-                  </Link>
-                </li>
-              )}
-              {isLoggedIn && userRole === 'applicant' && (
-                <li>
-                  <Link href="/my-application" className="text-blue-400 hover:text-blue-300 transition-colors">
-                    My Profile
-                  </Link>
-                </li>
-              )}
             </ul>
           </nav>
 
