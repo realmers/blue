@@ -21,11 +21,11 @@ export default async function Home() {
         <div className="container flex flex-1 flex-col items-center justify-center gap-12 px-4 py-16">
           <div className="max-w-2xl text-center">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl text-slate-900 mb-6">
-              Recruitment System
+              Gröna Lund
             </h1>
             <p className="text-lg text-slate-600 leading-relaxed">
-              Welcome to the official recruitment portal for the upcoming season.
-              Manage your applications or join our team to create unforgettable experiences.
+              Välkommen till rekryteringssystemet för Gröna Lund!
+              Hantera dina ansökningar eller gå med i vårt team för att skapa oförglömliga upplevelser.
             </p>
           </div>
 
@@ -33,16 +33,16 @@ export default async function Home() {
             {/* Applicants Card */}
             <Card className="flex flex-col justify-between transition-all hover:shadow-md hover:border-slate-300">
               <CardHeader>
-                <CardTitle className="text-xl">Applicants</CardTitle>
+                <CardTitle className="text-xl">Applikanter</CardTitle>
                 <CardDescription>
-                  Looking for a job? Register your profile, set your availability, and apply today.
+                  Letar du efter ett jobb? Registrera din profil, ange din tillgänglighet och ansök idag.
                 </CardDescription>
               </CardHeader>
               {!session && (
                 <CardFooter>
                   <Button asChild className="w-full sm:w-auto">
-                    <Link href="/auth/sign-up">
-                      Create Account →
+                    <Link href="/create-account">
+                      Skapa konto →
                     </Link>
                   </Button>
                 </CardFooter>
@@ -52,16 +52,16 @@ export default async function Home() {
             {/* Recruiters Card */}
             <Card className="flex flex-col justify-between transition-all hover:shadow-md hover:border-slate-300">
               <CardHeader>
-                <CardTitle className="text-xl">Recruiters</CardTitle>
+                <CardTitle className="text-xl">Rekryterare</CardTitle>
                 <CardDescription>
-                  Log in to manage applications, review candidates, and select staff.
+                  Logga in för att hantera ansökningar, granska kandidater och välja personal.
                 </CardDescription>
               </CardHeader>
               {!session && (
                 <CardFooter>
                   <Button asChild className="w-full sm:w-auto bg-black text-white hover:bg-slate-800">
                     <Link href="/auth/sign-in">
-                      Log In as Recruiter
+                      Logga in som rekryterare
                     </Link>
                   </Button>
                 </CardFooter>
@@ -72,20 +72,20 @@ export default async function Home() {
           <div className="flex flex-col items-center gap-4 mt-8">
             {session ? (
               <div className="text-center space-y-4">
-                <p className="text-slate-600">Welcome back, <span className="font-semibold text-slate-900">{session.user.name}</span>.</p>
+                <p className="text-slate-600">Välkommen tillbaka, <span className="font-semibold text-slate-900">{session.user.name}</span>.</p>
                 <Button asChild size="lg" className="px-8">
                   <Link href="/dashboard">
-                    Go to Dashboard
+                    Gå till instrumentpanelen
                   </Link>
                 </Button>
               </div>
             ) : (
               <div className="flex items-center gap-2">
                 <Label className="text-slate-500 font-normal cursor-pointer">
-                  Existing user?
+                  Befintlig användare?
                 </Label>
                 <Button asChild variant="link" className="px-0">
-                  <Link href="/auth/sign-in">Sign in to your account</Link>
+                  <Link href="/auth/sign-in">Logga in på ditt konto</Link>
                 </Button>
               </div>
             )}
