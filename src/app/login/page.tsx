@@ -31,12 +31,12 @@ export default function SignInPage() {
     try {
       const res = await authClient.signIn.username({ username, password });
       if (res.error) {
-        setError(res.error.message ?? "Sign in failed");
+        setError(res.error.message ?? "Inloggningen misslyckades");
       } else {
         router.push("/");
       }
     } catch (err: any) {
-      setError(err.message || "Unexpected error");
+      setError(err.message || "Oväntat fel inträffade");
     } finally {
       setLoading(false);
     }
@@ -48,28 +48,28 @@ export default function SignInPage() {
         <Card className="shadow-lg border-slate-200">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold tracking-tight text-center">
-              Sign in
+              Logga in
             </CardTitle>
             <CardDescription className="text-center">
-              Enter your credentials to access your recruitment dashboard
+              Ange dina inloggningsuppgifter för att söka ledig tjänster
             </CardDescription>
           </CardHeader>
 
           <form onSubmit={onSubmit}>
             <CardContent className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">Användarnamn</Label>
                 <Input
                   id="username"
                   type="text"
-                  placeholder="jdoe123"
+                  placeholder="användare123"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Lösenord</Label>
                 <Input
                   id="password"
                   type="password"
@@ -93,16 +93,16 @@ export default function SignInPage() {
                 className="w-full bg-black text-white hover:bg-slate-800"
                 disabled={loading}
               >
-                {loading ? "Signing in..." : "Sign in"}
+                {loading ? "Loggar in..." : "Logga in"}
               </Button>
 
               <div className="text-center text-sm text-slate-600">
-                Don&apos;t have an account?{" "}
+                Har du inte ett konto?{" "}
                 <Link
-                  href="/auth/sign-up"
+                  href="/create-account"
                   className="font-medium text-slate-900 underline underline-offset-4 hover:text-slate-700"
                 >
-                  Create account
+                  Skapa konto
                 </Link>
               </div>
             </CardFooter>
