@@ -4,6 +4,8 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import { TRPCReactProvider } from "@/trpc/react";
+import { HeaderView } from "@/view/HeaderView";
+import { FooterView } from "@/view/FooterView";
 
 export const metadata: Metadata = {
   title: "Blue App",
@@ -21,8 +23,20 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geist.variable}`}>
-      <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+      <body className="flex min-h-screen flex-col">
+        <TRPCReactProvider>
+
+          {/* Header */}
+          <HeaderView />
+          
+          <main className="flex-1">
+            {children}
+          </main>
+          
+          {/* Footer */}
+          <FooterView/>
+          
+          </TRPCReactProvider>
       </body>
     </html>
   );
