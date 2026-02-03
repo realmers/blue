@@ -1,6 +1,6 @@
 import { getSession } from "@/server/better-auth/server";
 import { HydrateClient } from "@/trpc/server";
-import { CreateAccountForm } from "./CreateAccountForm";
+import { CreateAccountForm } from "./create-account-form";
 
 export default async function CreateAccountPage() {
   const session = await getSession();
