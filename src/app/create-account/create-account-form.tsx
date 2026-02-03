@@ -354,6 +354,7 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
                   value={period.from_date}
                   onChange={(e) => updateAvailabilityPeriod(index, "from_date", e.target.value)}
                   disabled={createAccount.isPending}
+                  required
                 />
               </div>
               <div className="space-y-2">
@@ -364,6 +365,7 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
                   value={period.to_date}
                   onChange={(e) => updateAvailabilityPeriod(index, "to_date", e.target.value)}
                   disabled={createAccount.isPending}
+                  required
                 />
               </div>
               {availabilityPeriods.length > 1 && (
