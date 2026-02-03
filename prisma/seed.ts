@@ -162,6 +162,28 @@ async function main() {
       skipDuplicates: true
     });
   }
+
+  //
+  // This fixes the "Unique constraint failed" error by ensuring the auto-increment
+  // counter starts AFTER the IDs we just inserted.
+  
+  const tablesToReset = [
+    { table: 'user', col: 'id' },
+    { table: 'role', col: 'role_id' },
+    { table: 'competence', col: 'competence_id' },
+    { table: 'competence_profile', col: 'competence_profile_id' },
+    { table: 'availability', col: 'availability_id' }
+  ];
+
+  for (const { table, col } of tablesToReset) {
+    try {
+      await db.$executeRawUnsafe(`
+        SELECT setval(pg_get_serial_sequence('"${table}"', '${col}'), coalesce(max("${col}")+1, 1), false) FROM "${table}";
+      `);
+    } catch (err) {
+    }
+  }
+
 }
 
 main()
