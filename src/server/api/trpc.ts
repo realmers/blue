@@ -102,7 +102,7 @@ const timingMiddleware = t.middleware(async ({ ctx, next, path, type }) => {
   const durationMs = end - start;
 
   if (result.ok) {
-    ctx.logger.info({ path, type, durationMs }, `[TRPC] ${path} success`);
+    ctx.logger.trace({ path, type, durationMs }, `[TRPC] ${path} success`);
   } else {
     ctx.logger.error(
       { path, type, durationMs, error: result.error.message },

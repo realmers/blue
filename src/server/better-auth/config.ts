@@ -41,15 +41,22 @@ export const auth = betterAuth({
       generateId: "serial" // use serial ids for users due to legacy database
     }
   },
-	logger: {
-		disabled: false,
-		disableColors: false,
-		level: "warn",
-		log: (level, message, ...args) => {
-			// Custom logging implementation
-      logger[level === 'info' ? 'info' : level === 'warn' ? 'warn' : level === 'error' ? 'error' : 'debug']({ args }, message);
-		}
-	}
+  logger: {
+    disabled: false,
+    disableColors: false,
+    level: "warn",
+    log: (level, message, ...args) => {
+      if (level === "info") {
+        logger.info({ args }, message);
+      } else if (level === "warn") {
+        logger.warn({ args }, message);
+      } else if (level === "error") {
+        logger.error({ args }, message);
+      } else {
+        logger.debug({ args }, message);
+      }
+    }
+  }
 
 });
 
