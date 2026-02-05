@@ -14,7 +14,7 @@ export const HeaderView = () => {
         {/* Left Link Logo */}
         <div className="flex items-center">
           <Link href="/" className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity">
-            Gröna Lund Rekrytering
+            Blå Lund Rekrytering
           </Link>
         </div>
 

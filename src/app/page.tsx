@@ -21,10 +21,10 @@ export default async function Home() {
         <div className="container flex flex-1 flex-col items-center justify-center gap-12 px-4 py-16">
           <div className="max-w-2xl text-center">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl text-slate-900 mb-6">
-              Gröna Lund
+              Blå Lund
             </h1>
             <p className="text-lg text-slate-600 leading-relaxed">
-              Välkommen till rekryteringssystemet för Gröna Lund!
+              Välkommen till rekryteringssystemet för Blå Lund!
               Hantera dina ansökningar eller gå med i vårt team för att skapa oförglömliga upplevelser.
             </p>
           </div>

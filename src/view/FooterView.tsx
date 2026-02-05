@@ -14,7 +14,7 @@ export const FooterView = () => {
           {/* Kolumn 1: Varumärke / Info */}
           <div className="flex flex-col space-y-4">
             <Link href="/" className="text-xl font-bold tracking-tight text-white hover:opacity-80">
-              Gröna Lund Rekrytering
+              Blå Lund Rekrytering
             </Link>
             <p className="text-sm text-gray-400">
               Sök Stockholms roligaste sommarjobb nu.
@@ -58,7 +58,7 @@ export const FooterView = () => {
         {/* Copyright-sektion längst ner */}
         <div className="mt-12 border-t border-gray-800 pt-8 text-center">
           <p className="text-xs text-gray-500">
-            &copy; {currentYear} Gröna Lund Rekrytering. IV1201-projekt. Alla rättigheter förhoppningsvis reserverade :)
+            &copy; {currentYear} Blå Lund Rekrytering. IV1201-projekt. Alla rättigheter förhoppningsvis reserverade :)
           </p>
         </div>
         
