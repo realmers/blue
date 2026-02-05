@@ -14,7 +14,7 @@ export const HeaderView = () => {
         {/* Left Link Logo */}
         <div className="flex items-center">
           <Link href="/" className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity">
-            GreenGrove Recruitment
+            Gröna Lund Rekrytering
           </Link>
         </div>
 
@@ -27,17 +27,17 @@ export const HeaderView = () => {
               {/* Links */}
               <li>
                 <Link href="/" className="text-gray-300 hover:text-white transition-colors">
-                  Home
+                  Hem
                 </Link>
               </li>
               <li>
                 <Link href="/somewhere2" className="text-gray-300 hover:text-white transition-colors">
-                  Somewhere2
+                  Länk2
                 </Link>
               </li>
               <li>
                 <Link href="/somewhere3" className="text-gray-300 hover:text-white transition-colors">
-                  Somewhere3
+                  Länk3
                 </Link>
               </li>
             </ul>
@@ -54,11 +54,11 @@ export const HeaderView = () => {
           <div>
             {isLoggedIn ? (
               <button className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 transition-colors">
-                Log out
+                Logga ut
               </button>
             ) : (
               <Link href="/login" className="rounded-md bg-white px-4 py-2 text-sm font-medium text-black hover:bg-gray-200 transition-colors">
-                Log in
+                Logga in
               </Link>
             )}
           </div>

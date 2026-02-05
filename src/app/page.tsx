@@ -33,7 +33,7 @@ export default async function Home() {
             {/* Applicants Card */}
             <Card className="flex flex-col justify-between transition-all hover:shadow-md hover:border-slate-300">
               <CardHeader>
-                <CardTitle className="text-xl">Applikanter</CardTitle>
+                <CardTitle className="text-xl">Sökande</CardTitle>
                 <CardDescription>
                   Letar du efter ett jobb? Registrera din profil, ange din tillgänglighet och ansök idag.
                 </CardDescription>
@@ -60,7 +60,7 @@ export default async function Home() {
               {!session && (
                 <CardFooter>
                   <Button asChild className="w-full sm:w-auto bg-black text-white hover:bg-slate-800">
-                    <Link href="/auth/sign-in">
+                    <Link href="/login">
                       Logga in som rekryterare
                     </Link>
                   </Button>
@@ -85,7 +85,7 @@ export default async function Home() {
                   Befintlig användare?
                 </Label>
                 <Button asChild variant="link" className="px-0">
-                  <Link href="/auth/sign-in">Logga in på ditt konto</Link>
+                  <Link href="/login">Logga in på ditt konto</Link>
                 </Button>
               </div>
             )}
