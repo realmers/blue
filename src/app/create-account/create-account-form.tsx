@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/card";
 import { CalendarIcon, UserIcon, BriefcaseIcon, LockIcon, Trash2Icon, Loader2Icon } from "lucide-react";
 
-// Helper for styling inputs
 function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -25,7 +24,6 @@ function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputEleme
   );
 }
 
-// Helper for styling selects
 function Select({ className, ...props }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <div className="relative">
@@ -61,7 +59,6 @@ interface CreateAccountFormProps {
 export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }: CreateAccountFormProps) {
   const router = useRouter();
   
-  // Form state
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState(defaultEmail ?? "");
@@ -79,8 +76,8 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
     { from_date: "", to_date: "" }
   ]);
 
-  // Error state
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Fetch competences from database
   const { data: competences, isLoading: isLoadingCompetences } = api.user.getCompetences.useQuery();
@@ -91,13 +88,79 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
       router.push("/applicants");
     },
     onError: (err) => {
-      setError(err.message);
+      // Check if it's a Zod validation error (fallback just in case)
+      const zodError = err.data?.zodError;
+      if (zodError?.fieldErrors) {
+        const errors: Record<string, string> = {};
+        for (const [field, messages] of Object.entries(zodError.fieldErrors)) {
+          if (Array.isArray(messages) && messages.length > 0) {
+            errors[field] = messages[0] as string;
+          }
+        }
+        setFieldErrors(errors);
+        setError(null);
+      } else {
+        // Map server error messages to specific fields
+        const message = err.message;
+        if (message.includes("E-post") || message.includes("email")) {
+          setFieldErrors({ email: message });
+          setError(null);
+        } else if (message.includes("Användarnamn") || message.includes("username")) {
+          setFieldErrors({ username: message });
+          setError(null);
+        } else if (message.includes("Personnum") || message.includes("pnr")) {
+          setFieldErrors({ pnr: message });
+          setError(null);
+        } else if (message.includes("Ett fel uppstod") || message.includes("Försök igen")) {
+          // Server returned a user-friendly message
+          setError(message);
+          setFieldErrors({});
+        } else {
+          // Unknown error - show generic message
+          console.error("Registration error:", err);
+          setError("Ett oväntat fel uppstod. Försök igen senare.");
+          setFieldErrors({});
+        }
+      }
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setFieldErrors({});
+
+    // Client-side validation
+    const errors: Record<string, string> = {};
+    
+    if (username.length < 3 || username.length > 50) {
+      errors.username = "Användarnamnet måste vara mellan 3 och 50 tecken";
+    }
+    
+    if (password.length < 8 || password.length > 64) {
+      errors.password = "Lösenordet måste vara mellan 8 och 64 tecken";
+    }
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = "Ange en giltig e-postadress";
+    }
+
+    if (!name.trim()) {
+      errors.name = "Förnamn är obligatoriskt";
+    }
+
+    if (!surname.trim()) {
+      errors.surname = "Efternamn är obligatoriskt";
+    }
+    
+    if (!/^\d{12}$/.test(pnr)) {
+      errors.pnr = "Personnumret måste vara exakt 12 siffror";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
 
     // Filter out empty competence profiles
     const validCompetenceProfiles = competenceProfiles.filter(
@@ -174,12 +237,14 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
             <Input 
               id="username" 
               name="username" 
-              placeholder="anvandare123" 
               required 
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={createAccount.isPending}
             />
+            {fieldErrors.username && (
+              <p className="text-sm text-red-600">{fieldErrors.username}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Lösenord</Label>
@@ -193,6 +258,9 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
               onChange={(e) => setPassword(e.target.value)}
               disabled={createAccount.isPending}
             />
+            {fieldErrors.password && (
+              <p className="text-sm text-red-600">{fieldErrors.password}</p>
+            )}
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="email">E-postadress</Label>
@@ -200,12 +268,14 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
               id="email" 
               name="email" 
               type="email" 
-              placeholder="john.doe@example.com" 
               required 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={createAccount.isPending}
             />
+            {fieldErrors.email && (
+              <p className="text-sm text-red-600">{fieldErrors.email}</p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -227,36 +297,43 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
             <Input 
               id="name" 
               name="name" 
-              placeholder="John" 
               required 
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={createAccount.isPending}
             />
+            {fieldErrors.name && (
+              <p className="text-sm text-red-600">{fieldErrors.name}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="surname">Efternamn</Label>
             <Input 
               id="surname" 
               name="surname" 
-              placeholder="Doe" 
               required 
               value={surname}
               onChange={(e) => setSurname(e.target.value)}
               disabled={createAccount.isPending}
             />
+            {fieldErrors.surname && (
+              <p className="text-sm text-red-600">{fieldErrors.surname}</p>
+            )}
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="pnr">Personnummer</Label>
             <Input 
               id="pnr" 
               name="pnr" 
-              placeholder="YBXX12345678" 
+              placeholder="Exempel: 200610231234" 
               required 
               value={pnr}
               onChange={(e) => setPnr(e.target.value)}
               disabled={createAccount.isPending}
             />
+            {fieldErrors.pnr && (
+              <p className="text-sm text-red-600">{fieldErrors.pnr}</p>
+            )}
           </div>
         </CardContent>
       </Card>
