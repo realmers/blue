@@ -21,10 +21,10 @@ export default async function Home() {
         <div className="container flex flex-1 flex-col items-center justify-center gap-12 px-4 py-16">
           <div className="max-w-2xl text-center">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl text-slate-900 mb-6">
-              Gröna Lund
+              Blå Lund
             </h1>
             <p className="text-lg text-slate-600 leading-relaxed">
-              Välkommen till rekryteringssystemet för Gröna Lund!
+              Välkommen till rekryteringssystemet för Blå Lund!
               Hantera dina ansökningar eller gå med i vårt team för att skapa oförglömliga upplevelser.
             </p>
           </div>
@@ -33,7 +33,7 @@ export default async function Home() {
             {/* Applicants Card */}
             <Card className="flex flex-col justify-between transition-all hover:shadow-md hover:border-slate-300">
               <CardHeader>
-                <CardTitle className="text-xl">Applikanter</CardTitle>
+                <CardTitle className="text-xl">Sökande</CardTitle>
                 <CardDescription>
                   Letar du efter ett jobb? Registrera din profil, ange din tillgänglighet och ansök idag.
                 </CardDescription>
@@ -60,7 +60,7 @@ export default async function Home() {
               {!session && (
                 <CardFooter>
                   <Button asChild className="w-full sm:w-auto bg-black text-white hover:bg-slate-800">
-                    <Link href="/auth/sign-in">
+                    <Link href="/login">
                       Logga in som rekryterare
                     </Link>
                   </Button>
@@ -85,7 +85,7 @@ export default async function Home() {
                   Befintlig användare?
                 </Label>
                 <Button asChild variant="link" className="px-0">
-                  <Link href="/auth/sign-in">Logga in på ditt konto</Link>
+                  <Link href="/login">Logga in på ditt konto</Link>
                 </Button>
               </div>
             )}
