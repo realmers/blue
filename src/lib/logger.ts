@@ -8,17 +8,17 @@ export const logger =
   globalForLogger.logger ||
   pino({
     // Set level from env
-    level: env.LOG_LEVEL, 
+    level: env.LOG_LEVEL,
     transport:
       process.env.NODE_ENV === 'development'
         ? {
-            target: 'pino-pretty',
-            options: {
-              colorize: true,
-              ignore: 'pid,hostname', // Cleaner dev output
-              translateTime: 'SYS:standard',
-            },
-          }
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            ignore: 'pid,hostname', // Cleaner dev output
+            translateTime: 'SYS:standard',
+          },
+        }
         : undefined, // Use default JSON format in production
     // Best Practice: Redact sensitive data
     redact: {
