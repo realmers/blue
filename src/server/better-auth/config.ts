@@ -6,6 +6,7 @@ import { hash, verify } from "argon2";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
+import { logger } from "@/lib/logger";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
@@ -40,6 +41,15 @@ export const auth = betterAuth({
       generateId: "serial" // use serial ids for users due to legacy database
     }
   },
+	logger: {
+		disabled: false,
+		disableColors: false,
+		level: "warn",
+		log: (level, message, ...args) => {
+			// Custom logging implementation
+      logger[level === 'info' ? 'info' : level === 'warn' ? 'warn' : level === 'error' ? 'error' : 'debug']({ args }, message);
+		}
+	}
 
 });
 

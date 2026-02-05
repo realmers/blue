@@ -163,7 +163,6 @@ async function main() {
     });
   }
 
-  //
   // This fixes the "Unique constraint failed" error by ensuring the auto-increment
   // counter starts AFTER the IDs we just inserted.
   

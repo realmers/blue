@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 
 import { auth } from "@/server/better-auth";
 import { db } from "@/server/db";
+import { logger } from "@/lib/logger";
 
 /**
  * 1. CONTEXT
@@ -33,6 +34,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   return {
     db,
     session,
+    logger,
     ...opts,
   };
 };
@@ -85,7 +87,7 @@ export const createTRPCRouter = t.router;
  * You can remove this if you don't like it, but it can help catch unwanted waterfalls by simulating
  * network latency that would occur in production but not in local development.
  */
-const timingMiddleware = t.middleware(async ({ next, path }) => {
+const timingMiddleware = t.middleware(async ({ ctx, next, path, type }) => {
   const start = Date.now();
 
   if (t._config.isDev) {
@@ -97,7 +99,16 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   const result = await next();
 
   const end = Date.now();
-  console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
+  const durationMs = end - start;
+
+  if (result.ok) {
+    ctx.logger.info({ path, type, durationMs }, `[TRPC] ${path} success`);
+  } else {
+    ctx.logger.error(
+      { path, type, durationMs, error: result.error.message },
+      `[TRPC] ${path} error`
+    );
+  }
 
   return result;
 });
