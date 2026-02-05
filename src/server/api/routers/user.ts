@@ -35,12 +35,15 @@ export const userRouter = createTRPCRouter({
   createAccount: publicProcedure
     .input(createAccountSchema)
     .mutation(async ({ ctx, input }) => {
+      ctx.logger.info({ username: input.username, email: input.email }, "Attempting to create account");
+      
       // Check if username already exists
       const existingUsername = await ctx.db.user.findUnique({
         where: { username: input.username },
       });
 
       if (existingUsername) {
+        ctx.logger.warn({ username: input.username }, "Signup attempt with existing username");
         throw new TRPCError({
           code: "CONFLICT",
           message: "Användarnamnet är redan taget",
@@ -53,6 +56,7 @@ export const userRouter = createTRPCRouter({
       });
 
       if (existingEmail) {
+        ctx.logger.warn({ email: input.email }, "Signup attempt with existing email");
         throw new TRPCError({
           code: "CONFLICT",
           message: "E-postadressen är redan registrerad",
@@ -116,6 +120,8 @@ export const userRouter = createTRPCRouter({
 
         return newUser;
       });
+
+      ctx.logger.info({ userId: user.id }, "Account created successfully");
 
       return {
         success: true,
