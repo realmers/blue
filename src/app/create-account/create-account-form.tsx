@@ -59,7 +59,6 @@ interface CreateAccountFormProps {
 export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }: CreateAccountFormProps) {
   const router = useRouter();
   
-  // Form state
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState(defaultEmail ?? "");
@@ -77,7 +76,6 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
     { from_date: "", to_date: "" }
   ]);
 
-  // Error state
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
@@ -90,7 +88,7 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
       router.push("/applicants");
     },
     onError: (err) => {
-      // Check if it's a Zod validation error
+      // Check if it's a Zod validation error (fallback just in case)
       const zodError = err.data?.zodError;
       if (zodError?.fieldErrors) {
         const errors: Record<string, string> = {};
@@ -118,7 +116,7 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
           setError(message);
           setFieldErrors({});
         } else {
-          // Unknown error - show generic message (don't expose technical details)
+          // Unknown error - show generic message
           console.error("Registration error:", err);
           setError("Ett oväntat fel uppstod. Försök igen senare.");
           setFieldErrors({});
@@ -135,8 +133,24 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
     // Client-side validation
     const errors: Record<string, string> = {};
     
+    if (username.length < 3 || username.length > 50) {
+      errors.username = "Användarnamnet måste vara mellan 3 och 50 tecken";
+    }
+    
     if (password.length < 8 || password.length > 64) {
       errors.password = "Lösenordet måste vara mellan 8 och 64 tecken";
+    }
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = "Ange en giltig e-postadress";
+    }
+
+    if (!name.trim()) {
+      errors.name = "Förnamn är obligatoriskt";
+    }
+
+    if (!surname.trim()) {
+      errors.surname = "Efternamn är obligatoriskt";
     }
     
     if (!/^\d{12}$/.test(pnr)) {
@@ -288,6 +302,9 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
               onChange={(e) => setName(e.target.value)}
               disabled={createAccount.isPending}
             />
+            {fieldErrors.name && (
+              <p className="text-sm text-red-600">{fieldErrors.name}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="surname">Efternamn</Label>
@@ -299,6 +316,9 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
               onChange={(e) => setSurname(e.target.value)}
               disabled={createAccount.isPending}
             />
+            {fieldErrors.surname && (
+              <p className="text-sm text-red-600">{fieldErrors.surname}</p>
+            )}
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor="pnr">Personnummer</Label>
