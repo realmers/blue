@@ -14,27 +14,24 @@ export const FooterView = () => {
           {/* Kolumn 1: Varumärke / Info */}
           <div className="flex flex-col space-y-4">
             <Link href="/" className="text-xl font-bold tracking-tight text-white hover:opacity-80">
-              GreenGrove Recruitment
+              Blå Lund Rekrytering
             </Link>
             <p className="text-sm text-gray-400">
-              Connecting top talent KTH students with flipping fries station at McDonalds.
+              Sök Stockholms roligaste sommarjobb nu.
             </p>
           </div>
 
           {/* Kolumn 2: För Sökande (Relevant för Use Case 5.x) */}
           <div>
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-200">
-              For Candidates
+              För Sökande
             </h3>
             <ul className="space-y-3 text-sm text-gray-400">
               <li>
-                <Link href="/register" className="hover:text-white transition-colors">Register Account</Link>
+                <Link href="/register" className="hover:text-white transition-colors">Registrera konto</Link>
               </li>
               <li>
-                <Link href="/login" className="hover:text-white transition-colors">Log In</Link>
-              </li>
-              <li>
-                <Link href="/jobs" className="hover:text-white transition-colors">Browse Jobs</Link>
+                <Link href="/login" className="hover:text-white transition-colors">Logga in</Link>
               </li>
             </ul>
           </div>
@@ -42,17 +39,17 @@ export const FooterView = () => {
           {/* Kolumn 3: Support & Legal (Relevant för Task 28 & 30) */}
           <div>
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gray-200">
-              Support & Legal
+              Support & Juridik
             </h3>
             <ul className="space-y-3 text-sm text-gray-400">
               <li>
-                <Link href="/contact" className="hover:text-white transition-colors">Contact Support</Link>
+                <Link href="/contact" className="hover:text-white transition-colors">Kontakta support</Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                <Link href="/privacy" className="hover:text-white transition-colors">Integritetspolicy</Link>
               </li>
               <li>
-                <Link href="/status" className="hover:text-white transition-colors">System Status</Link>
+                <Link href="/status" className="hover:text-white transition-colors">Systemstatus</Link>
               </li>
             </ul>
           </div>
@@ -61,7 +58,7 @@ export const FooterView = () => {
         {/* Copyright-sektion längst ner */}
         <div className="mt-12 border-t border-gray-800 pt-8 text-center">
           <p className="text-xs text-gray-500">
-            &copy; {currentYear} GreenGrove Recruitment. IV1201 Project. All rights hopefully reserved :)
+            &copy; {currentYear} Blå Lund Rekrytering. IV1201-projekt. Alla rättigheter förhoppningsvis reserverade :)
           </p>
         </div>
         
