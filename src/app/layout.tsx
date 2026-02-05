@@ -25,18 +25,14 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body className="flex min-h-screen flex-col">
         <TRPCReactProvider>
-
           {/* Header */}
           <HeaderView />
-          
-          <main className="flex-1">
-            {children}
-          </main>
-          
+
+          <main className="flex-1">{children}</main>
+
           {/* Footer */}
-          <FooterView/>
-          
-          </TRPCReactProvider>
+          <FooterView />
+        </TRPCReactProvider>
       </body>
     </html>
   );
