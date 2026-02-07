@@ -62,7 +62,6 @@ export default function SignInPage() {
                 <Input
                   id="username"
                   type="text"
-                  placeholder="jdoe123"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -73,7 +72,6 @@ export default function SignInPage() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="********"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

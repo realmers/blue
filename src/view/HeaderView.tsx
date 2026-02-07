@@ -1,68 +1,81 @@
 import Link from "next/link";
 
 export const HeaderView = () => {
-  // Dessa variabler simulerar inloggningsstatus för att uppfylla Task 5 och 6.
-  // I en riktig app hämtar du detta från din GlobalContext/State.
-  const isLoggedIn = false; 
-  const userRole = "recruiter"; // Kan vara 'recruiter' eller 'applicant'
+  // För Marcus. Dessa variabler kan du använda för inloggningsstatus för Task 5 och 6.
+  const isLoggedIn = false;
+  const userRole = "recruiter";
 
   return (
     // Main container
     <header className="sticky top-0 z-50 w-full border-b border-gray-800 bg-black text-white shadow-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        
-        {/* Left Link Logo */}
+        {/* Left column Logo/Name */}
         <div className="flex items-center">
-          <Link href="/" className="text-xl font-bold tracking-tight hover:opacity-80 transition-opacity">
+          <Link
+            href="/"
+            className="text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
+          >
             Blå Lund Rekrytering
           </Link>
         </div>
 
-        {/* Right Section: Navigation, Language, Auth */}
+        {/* Right Section: Navigation, Language, Auth, länk 2 och 3 för framtida behov.*/}
         <div className="flex items-center gap-6">
-          
           {/* Main Navigation */}
           <nav>
             <ul className="flex items-center gap-6 text-sm font-medium">
               {/* Links */}
               <li>
-                <Link href="/" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="/"
+                  className="text-gray-300 transition-colors hover:text-white"
+                >
                   Hem
                 </Link>
               </li>
               <li>
-                <Link href="/somewhere2" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="/somewhere2"
+                  className="text-gray-300 transition-colors hover:text-white"
+                >
                   Länk2
                 </Link>
               </li>
               <li>
-                <Link href="/somewhere3" className="text-gray-300 hover:text-white transition-colors">
+                <Link
+                  href="/somewhere3"
+                  className="text-gray-300 transition-colors hover:text-white"
+                >
                   Länk3
                 </Link>
               </li>
             </ul>
           </nav>
 
-          {/* Language Switcher - Required for Task 13  */}
-          <div className="flex items-center gap-2 text-sm text-gray-400 border-l border-gray-700 pl-6">
-            <button className="hover:text-white transition-colors font-medium text-white">EN</button>
+          {/* Language Switcher - Relevant för Task 13, om vi bestämmer oss för att implementera det. */}
+          <div className="flex items-center gap-2 border-l border-gray-700 pl-6 text-sm text-gray-400">
+            <button className="font-medium text-white transition-colors hover:text-white">
+              EN
+            </button>
             <span>/</span>
-            <button className="hover:text-white transition-colors">SV</button>
+            <button className="transition-colors hover:text-white">SV</button>
           </div>
 
-          {/* Authentication - Required for Task 5  */}
+          {/* Authentication - Task 5 */}
           <div>
             {isLoggedIn ? (
-              <button className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 transition-colors">
+              <button className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700">
                 Logga ut
               </button>
             ) : (
-              <Link href="/login" className="rounded-md bg-white px-4 py-2 text-sm font-medium text-black hover:bg-gray-200 transition-colors">
+              <Link
+                href="/login"
+                className="rounded-md bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-gray-200"
+              >
                 Logga in
               </Link>
             )}
           </div>
-
         </div>
       </div>
     </header>
