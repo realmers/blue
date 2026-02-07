@@ -45,6 +45,18 @@ export const auth = betterAuth({
   ],
   socialProviders: {
   },
+  databaseHooks: {
+    session: {
+      create: {
+        after: async (session) => {
+          logger.info(
+            { userId: session.userId, sessionId: session.id },
+            "User logged in"
+          );
+        },
+      },
+    },
+  },
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
