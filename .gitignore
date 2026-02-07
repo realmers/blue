@@ -48,3 +48,6 @@ next-env.d.ts
 
 # idea files
 .idea
+
+# logs
+logs

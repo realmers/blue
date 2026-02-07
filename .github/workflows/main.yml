@@ -1,4 +1,4 @@
-name: T3 Stack CI 
+name: main
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     
-    # 1. Provide "Dummy" Env Vars for the T3 safety check
+    # 1. Provide "Dummy" Env Vars for the safety check
     env:
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/unused"
       BETTER_AUTH_SECRET: "this_is_a_very_long_test_secret_123456789"
