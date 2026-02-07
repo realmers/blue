@@ -8,6 +8,7 @@ export const logger =
   globalForLogger.logger ||
   pino({
     // Set level from env
+    // FIXME: in production this should be a env variable for if file logging should be enabled or not.
     level: env.LOG_LEVEL,
     transport: {
       targets: [

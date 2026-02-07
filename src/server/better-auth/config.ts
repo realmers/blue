@@ -1,6 +1,7 @@
 import { APIError, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { magicLink, username } from "better-auth/plugins";
+import { z } from "zod";
 
 import { hash, verify } from "argon2";
 
@@ -30,15 +31,23 @@ export const auth = betterAuth({
       sendMagicLink: async ({ email, token, url }, request) => {
         // Restrict mails to only finnsinte.se
         const allowedDomains = ["finnsinte.se"];
-        const emailDomain = email.split("@")[1];
 
-        if (!allowedDomains.includes(emailDomain!)) {
-          // This prevents the email from being sent and stops the login flow
+        const emailSchema = z.email().refine((e) => {
+          const domain = e.split("@")[1]?.toLowerCase();
+          return domain && allowedDomains.includes(domain);
+        }, {
+          message: "Åtkomst begränsad till endast organisationens e-postadresser."
+        });
+
+        const result = emailSchema.safeParse(email);
+
+        if (!result.success) {
           throw new APIError("FORBIDDEN", {
-            message: "Åtkomst begränsad till endast organisationens e-postadresser."
+            message: result.error?.message ?? "Ogiltig e-postadress."
           });
         }
-        console.log(`\n magic link,${email}, URL: ${url}`);
+
+        logger.info({ email: result.data, url }, "Magic link link generated");
         // TODO implement email sending
       },
     }),
