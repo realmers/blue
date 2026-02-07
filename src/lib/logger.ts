@@ -8,18 +8,29 @@ export const logger =
   globalForLogger.logger ||
   pino({
     // Set level from env
+    // FIXME: in production this should be a env variable for if file logging should be enabled or not.
     level: env.LOG_LEVEL,
-    transport:
-      process.env.NODE_ENV === 'development'
-        ? {
-          target: 'pino-pretty',
+    transport: {
+      targets: [
+        {
+          target: process.env.NODE_ENV === 'development' ? 'pino-pretty' : 'pino/file',
+          options: process.env.NODE_ENV === 'development'
+            ? {
+                colorize: true,
+                ignore: 'pid,hostname',
+                translateTime: 'SYS:standard',
+              }
+            : { destination: 1 }, // Write to stdout in production
+        },
+        {
+          target: 'pino/file',
           options: {
-            colorize: true,
-            ignore: 'pid,hostname', // Cleaner dev output
-            translateTime: 'SYS:standard',
+            destination: './logs/app.log',
+            mkdir: true,
           },
-        }
-        : undefined, // Use default JSON format in production
+        },
+      ],
+    },
     // Best Practice: Redact sensitive data
     redact: {
       paths: ['password', 'token', 'headers.authorization', 'dbUrl'],
