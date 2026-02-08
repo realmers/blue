@@ -1,6 +1,7 @@
-import { betterAuth } from "better-auth";
+import { APIError, betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { username } from "better-auth/plugins";
+import { magicLink, username } from "better-auth/plugins";
+import { z } from "zod";
 
 import { hash, verify } from "argon2";
 
@@ -25,9 +26,45 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    username()
+    username(),
+    magicLink({
+      sendMagicLink: async ({ email, token, url }, request) => {
+        // Restrict mails to only finnsinte.se
+        const allowedDomains = ["finnsinte.se"];
+
+        const emailSchema = z.email().refine((e) => {
+          const domain = e.split("@")[1]?.toLowerCase();
+          return domain && allowedDomains.includes(domain);
+        }, {
+          message: "Åtkomst begränsad till endast organisationens e-postadresser."
+        });
+
+        const result = emailSchema.safeParse(email);
+
+        if (!result.success) {
+          throw new APIError("FORBIDDEN", {
+            message: result.error?.message ?? "Ogiltig e-postadress."
+          });
+        }
+
+        logger.info({ email: result.data, url }, "Magic link link generated");
+        // TODO implement email sending
+      },
+    }),
   ],
   socialProviders: {
+  },
+  databaseHooks: {
+    session: {
+      create: {
+        after: async (session) => {
+          logger.info(
+            { userId: session.userId, sessionId: session.id },
+            "User logged in"
+          );
+        },
+      },
+    },
   },
   session: {
     expiresIn: 60 * 60 * 24 * 7, // 7 days
