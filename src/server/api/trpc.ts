@@ -31,9 +31,30 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth.api.getSession({
     headers: opts.headers,
   });
+
+  // If user is logged in, attach their role name to the session object
+  const user = session?.user;
+  let roleName: string | undefined = undefined;
+
+  if (user && "role_id" in user && typeof user.role_id === "number") {
+    const role = await db.role.findUnique({
+      where: { role_id: user.role_id },
+      select: { name: true },
+    });
+    roleName = role?.name ?? undefined;
+  }
+
   return {
     db,
-    session,
+    session: session
+      ? {
+          ...session,
+          user: {
+            ...session.user,
+            role: roleName,
+          },
+        }
+      : null,
     logger,
     ...opts,
   };
@@ -143,3 +164,34 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+
+/** Reusable middleware that enforces users have recruiter role before running the procedure. */
+const enforceUserIsrecruiter = t.middleware(({ ctx, next }) => {
+  if (!ctx.session?.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  if (ctx.session.user.role !== "recruiter") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You need recruiter privileges to perform this action",
+    });
+  }
+
+  return next({
+    ctx: {
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
+
+
+/**
+ * recruiter procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to recruiter users, use this.
+ * It verifies the session is valid, the user is logged in, and has the recruiter role.
+ */
+export const recruiterProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(enforceUserIsrecruiter);
