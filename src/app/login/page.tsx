@@ -23,10 +23,10 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
   
   const [email, setEmail] = useState("");
-  const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [ismagicLinkSent, setMagicLinkSent] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isloading, setLoading] = useState(false);
 
   async function onSubmitUsername(e: React.FormEvent) {
     e.preventDefault();
@@ -40,8 +40,9 @@ export default function SignInPage() {
       } else {
         router.push("/");
       }
-    } catch (err: any) {
-      setError(err.message || "Ett oväntat fel inträffade");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Ett oväntat fel inträffade";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -64,8 +65,9 @@ export default function SignInPage() {
         setMagicLinkSent(true);
         // check terminal for the link!
       }
-    } catch (err: any) {
-      setError(err.message || "Ett oväntat fel inträffade");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Ett oväntat fel inträffade";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -93,7 +95,7 @@ export default function SignInPage() {
             )}
 
             {/* Magic link */}
-            {!magicLinkSent ? (
+            {!ismagicLinkSent ? (
               <form onSubmit={onSubmitMagicLink} className="grid gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Logga in med E-post</Label>
@@ -109,9 +111,9 @@ export default function SignInPage() {
                 <Button
                   type="submit"
                   className="w-full bg-black text-white"
-                  disabled={loading}
+                  disabled={isloading}
                 >
-                  {loading ? "Skickar..." : "Skicka inloggningslänk"}
+                  {isloading ? "Skickar..." : "Skicka inloggningslänk"}
                 </Button>
               </form>
             ) : (
@@ -165,7 +167,7 @@ export default function SignInPage() {
                 type="submit"
                 variant="outline"
                 className="w-full border-slate-300 hover:bg-slate-50"
-                disabled={loading}
+                disabled={isloading}
               >
                 Logga in med lösenord
               </Button>

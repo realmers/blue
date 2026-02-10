@@ -16,8 +16,26 @@ const createPrismaClient = () => {
     ],
   });
 
-  // @ts-ignore - Prisma event types can be tricky with custom clients
-  client.$on("query", (e: any) => {
+  interface QueryEvent {
+    query: string;
+    params: string[];
+    duration: number;
+  }
+
+  interface InfoEvent {
+    message: string;
+  }
+
+  interface WarnEvent {
+    message: string;
+  }
+
+  interface ErrorEvent {
+    message: string;
+  }
+
+  // @ts-expect-error - Prisma event types can be tricky with custom clients
+  client.$on("query", (e: QueryEvent) => {
     if (env.LOG_LEVEL === "debug" || env.LOG_LEVEL === "trace") {
       logger.debug(
         { query: e.query, params: e.params, durationMs: e.duration },
@@ -26,18 +44,15 @@ const createPrismaClient = () => {
     }
   });
 
-  // @ts-ignore
-  client.$on("info", (e: any) => {
+  client.$on("info", (e: InfoEvent) => {
     logger.info(e.message);
   });
 
-  // @ts-ignore
-  client.$on("warn", (e: any) => {
+  client.$on("warn", (e: WarnEvent) => {
     logger.warn(e.message);
   });
 
-  // @ts-ignore
-  client.$on("error", (e: any) => {
+  client.$on("error", (e: ErrorEvent) => {
     logger.error(e.message);
   });
 
