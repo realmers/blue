@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { createAccountSchema, type CompetenceProfile, type AvailabilityPeriod } from "@/lib/validation/account-schema";
 import {
   Card,
   CardHeader,
@@ -40,16 +41,6 @@ function Select({ className, ...props }: React.SelectHTMLAttributes<HTMLSelectEl
   );
 }
 
-interface CompetenceProfile {
-  competence_id: number;
-  years_of_experience: number;
-}
-
-interface AvailabilityPeriod {
-  from_date: string;
-  to_date: string;
-}
-
 interface CreateAccountFormProps {
   defaultEmail?: string;
   defaultName?: string;
@@ -66,23 +57,19 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
   const [surname, setSurname] = useState(defaultSurname ?? "");
   const [pnr, setPnr] = useState("");
   
-  // Competence profiles
   const [competenceProfiles, setCompetenceProfiles] = useState<CompetenceProfile[]>([
-    { competence_id: 0, years_of_experience: 0 }
+    { competenceId: 0, yearsOfExperience: 0 }
   ]);
   
-  // Availability periods
   const [availabilityPeriods, setAvailabilityPeriods] = useState<AvailabilityPeriod[]>([
-    { from_date: "", to_date: "" }
+    { fromDate: "", toDate: "" }
   ]);
 
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Fetch competences from database
   const { data: competences, isLoading: isLoadingCompetences } = api.user.getCompetences.useQuery();
 
-  // Create account mutation
   const createAccount = api.user.createAccount.useMutation({
     onSuccess: () => {
       router.push("/applicants");
@@ -100,7 +87,6 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
         setFieldErrors(errors);
         setError(null);
       } else {
-        // Map server error messages to specific fields
         const message = err.message;
         if (message.includes("E-post") || message.includes("email")) {
           setFieldErrors({ email: message });
@@ -130,49 +116,17 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
     setError(null);
     setFieldErrors({});
 
-    // Client-side validation
-    const errors: Record<string, string> = {};
-    
-    if (username.length < 3 || username.length > 50) {
-      errors.username = "Användarnamnet måste vara mellan 3 och 50 tecken";
-    }
-    
-    if (password.length < 8 || password.length > 64) {
-      errors.password = "Lösenordet måste vara mellan 8 och 64 tecken";
-    }
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = "Ange en giltig e-postadress";
-    }
-
-    if (!name.trim()) {
-      errors.name = "Förnamn är obligatoriskt";
-    }
-
-    if (!surname.trim()) {
-      errors.surname = "Efternamn är obligatoriskt";
-    }
-    
-    if (!/^\d{12}$/.test(pnr)) {
-      errors.pnr = "Personnumret måste vara exakt 12 siffror";
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
-      return;
-    }
-
     // Filter out empty competence profiles
     const validCompetenceProfiles = competenceProfiles.filter(
-      (cp) => cp.competence_id > 0 && cp.years_of_experience >= 0
+      (cp) => cp.competenceId > 0 && cp.yearsOfExperience >= 0
     );
 
     // Filter out empty availability periods
     const validAvailabilityPeriods = availabilityPeriods.filter(
-      (ap) => ap.from_date && ap.to_date
+      (ap) => ap.fromDate && ap.toDate
     );
 
-    createAccount.mutate({
+    const formData = {
       username,
       password,
       email,
@@ -181,11 +135,28 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
       pnr,
       competenceProfiles: validCompetenceProfiles.length > 0 ? validCompetenceProfiles : undefined,
       availabilityPeriods: validAvailabilityPeriods.length > 0 ? validAvailabilityPeriods : undefined,
-    });
+    };
+
+    // Client-side validation using Zod
+    const result = createAccountSchema.safeParse(formData);
+
+    if (!result.success) {
+      const errors: Record<string, string> = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0];
+        if (field && typeof field === "string" && !errors[field]) {
+          errors[field] = issue.message;
+        }
+      }
+      setFieldErrors(errors);
+      return;
+    }
+
+    createAccount.mutate(result.data);
   };
 
   const addCompetenceProfile = () => {
-    setCompetenceProfiles([...competenceProfiles, { competence_id: 0, years_of_experience: 0 }]);
+    setCompetenceProfiles([...competenceProfiles, { competenceId: 0, yearsOfExperience: 0 }]);
   };
 
   const removeCompetenceProfile = (index: number) => {
@@ -199,7 +170,7 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
   };
 
   const addAvailabilityPeriod = () => {
-    setAvailabilityPeriods([...availabilityPeriods, { from_date: "", to_date: "" }]);
+    setAvailabilityPeriods([...availabilityPeriods, { fromDate: "", toDate: "" }]);
   };
 
   const removeAvailabilityPeriod = (index: number) => {
@@ -356,8 +327,8 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
                 <Label htmlFor={`competence-${index}`}>Kompetensområde</Label>
                 <Select 
                   id={`competence-${index}`}
-                  value={profile.competence_id}
-                  onChange={(e) => updateCompetenceProfile(index, "competence_id", Number(e.target.value))}
+                  value={profile.competenceId}
+                  onChange={(e) => updateCompetenceProfile(index, "competenceId", Number(e.target.value))}
                   disabled={createAccount.isPending || isLoadingCompetences}
                 >
                   <option value={0}>Välj en kompetens...</option>
@@ -377,8 +348,8 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
                   min="0" 
                   max="99.99"
                   placeholder="0.0"
-                  value={profile.years_of_experience || ""}
-                  onChange={(e) => updateCompetenceProfile(index, "years_of_experience", Number(e.target.value))}
+                  value={profile.yearsOfExperience || ""}
+                  onChange={(e) => updateCompetenceProfile(index, "yearsOfExperience", Number(e.target.value))}
                   disabled={createAccount.isPending}
                 />
               </div>
@@ -424,23 +395,23 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
           {availabilityPeriods.map((period, index) => (
             <div key={index} className="grid gap-4 sm:grid-cols-[1fr_1fr_auto] items-end border p-4 rounded-lg bg-slate-50/50">
               <div className="space-y-2">
-                <Label htmlFor={`from_date-${index}`}>Från datum</Label>
+                <Label htmlFor={`fromDate-${index}`}>Från datum</Label>
                 <Input 
-                  id={`from_date-${index}`}
+                  id={`fromDate-${index}`}
                   type="date"
-                  value={period.from_date}
-                  onChange={(e) => updateAvailabilityPeriod(index, "from_date", e.target.value)}
+                  value={period.fromDate}
+                  onChange={(e) => updateAvailabilityPeriod(index, "fromDate", e.target.value)}
                   disabled={createAccount.isPending}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor={`to_date-${index}`}>Till datum</Label>
+                <Label htmlFor={`toDate-${index}`}>Till datum</Label>
                 <Input 
-                  id={`to_date-${index}`}
+                  id={`toDate-${index}`}
                   type="date"
-                  value={period.to_date}
-                  onChange={(e) => updateAvailabilityPeriod(index, "to_date", e.target.value)}
+                  value={period.toDate}
+                  onChange={(e) => updateAvailabilityPeriod(index, "toDate", e.target.value)}
                   disabled={createAccount.isPending}
                   required
                 />
