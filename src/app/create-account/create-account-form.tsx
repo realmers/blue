@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { createAccountSchema, type CompetenceProfile, type AvailabilityPeriod } from "@/lib/validation/account-schema";
 import {
   Card,
   CardHeader,
@@ -40,16 +41,6 @@ function Select({ className, ...props }: React.SelectHTMLAttributes<HTMLSelectEl
   );
 }
 
-interface CompetenceProfile {
-  competence_id: number;
-  years_of_experience: number;
-}
-
-interface AvailabilityPeriod {
-  from_date: string;
-  to_date: string;
-}
-
 interface CreateAccountFormProps {
   defaultEmail?: string;
   defaultName?: string;
@@ -66,12 +57,10 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
   const [surname, setSurname] = useState(defaultSurname ?? "");
   const [pnr, setPnr] = useState("");
   
-  // Competence profiles
   const [competenceProfiles, setCompetenceProfiles] = useState<CompetenceProfile[]>([
     { competence_id: 0, years_of_experience: 0 }
   ]);
   
-  // Availability periods
   const [availabilityPeriods, setAvailabilityPeriods] = useState<AvailabilityPeriod[]>([
     { from_date: "", to_date: "" }
   ]);
@@ -79,10 +68,8 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Fetch competences from database
   const { data: competences, isLoading: isLoadingCompetences } = api.user.getCompetences.useQuery();
 
-  // Create account mutation
   const createAccount = api.user.createAccount.useMutation({
     onSuccess: () => {
       router.push("/applicants");
@@ -100,7 +87,6 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
         setFieldErrors(errors);
         setError(null);
       } else {
-        // Map server error messages to specific fields
         const message = err.message;
         if (message.includes("E-post") || message.includes("email")) {
           setFieldErrors({ email: message });
@@ -130,38 +116,6 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
     setError(null);
     setFieldErrors({});
 
-    // Client-side validation
-    const errors: Record<string, string> = {};
-    
-    if (username.length < 3 || username.length > 50) {
-      errors.username = "Användarnamnet måste vara mellan 3 och 50 tecken";
-    }
-    
-    if (password.length < 8 || password.length > 64) {
-      errors.password = "Lösenordet måste vara mellan 8 och 64 tecken";
-    }
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = "Ange en giltig e-postadress";
-    }
-
-    if (!name.trim()) {
-      errors.name = "Förnamn är obligatoriskt";
-    }
-
-    if (!surname.trim()) {
-      errors.surname = "Efternamn är obligatoriskt";
-    }
-    
-    if (!/^\d{12}$/.test(pnr)) {
-      errors.pnr = "Personnumret måste vara exakt 12 siffror";
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
-      return;
-    }
-
     // Filter out empty competence profiles
     const validCompetenceProfiles = competenceProfiles.filter(
       (cp) => cp.competence_id > 0 && cp.years_of_experience >= 0
@@ -172,7 +126,7 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
       (ap) => ap.from_date && ap.to_date
     );
 
-    createAccount.mutate({
+    const formData = {
       username,
       password,
       email,
@@ -181,7 +135,24 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
       pnr,
       competenceProfiles: validCompetenceProfiles.length > 0 ? validCompetenceProfiles : undefined,
       availabilityPeriods: validAvailabilityPeriods.length > 0 ? validAvailabilityPeriods : undefined,
-    });
+    };
+
+    // Client-side validation using Zod
+    const result = createAccountSchema.safeParse(formData);
+
+    if (!result.success) {
+      const errors: Record<string, string> = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0];
+        if (field && typeof field === "string" && !errors[field]) {
+          errors[field] = issue.message;
+        }
+      }
+      setFieldErrors(errors);
+      return;
+    }
+
+    createAccount.mutate(result.data);
   };
 
   const addCompetenceProfile = () => {
