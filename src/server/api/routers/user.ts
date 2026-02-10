@@ -75,24 +75,24 @@ export const userRouter = createTRPCRouter({
             },
           });
 
-          // Create competence profiles
+          // Create competence profiles (map camelCase to snake_case for Prisma)
           if (input.competenceProfiles && input.competenceProfiles.length > 0) {
             await tx.competence_profile.createMany({
               data: input.competenceProfiles.map((cp) => ({
                 person_id: newUser.id,
-                competence_id: cp.competence_id,
-                years_of_experience: cp.years_of_experience,
+                competence_id: cp.competenceId,
+                years_of_experience: cp.yearsOfExperience,
               })),
             });
           }
 
-          // Create availability periods
+          // Create availability periods (map camelCase to snake_case for Prisma)
           if (input.availabilityPeriods && input.availabilityPeriods.length > 0) {
             await tx.availability.createMany({
               data: input.availabilityPeriods.map((ap) => ({
                 person_id: newUser.id,
-                from_date: new Date(ap.from_date),
-                to_date: new Date(ap.to_date),
+                from_date: new Date(ap.fromDate),
+                to_date: new Date(ap.toDate),
               })),
             });
           }

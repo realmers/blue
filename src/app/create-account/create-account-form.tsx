@@ -58,11 +58,11 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
   const [pnr, setPnr] = useState("");
   
   const [competenceProfiles, setCompetenceProfiles] = useState<CompetenceProfile[]>([
-    { competence_id: 0, years_of_experience: 0 }
+    { competenceId: 0, yearsOfExperience: 0 }
   ]);
   
   const [availabilityPeriods, setAvailabilityPeriods] = useState<AvailabilityPeriod[]>([
-    { from_date: "", to_date: "" }
+    { fromDate: "", toDate: "" }
   ]);
 
   const [error, setError] = useState<string | null>(null);
@@ -118,12 +118,12 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
 
     // Filter out empty competence profiles
     const validCompetenceProfiles = competenceProfiles.filter(
-      (cp) => cp.competence_id > 0 && cp.years_of_experience >= 0
+      (cp) => cp.competenceId > 0 && cp.yearsOfExperience >= 0
     );
 
     // Filter out empty availability periods
     const validAvailabilityPeriods = availabilityPeriods.filter(
-      (ap) => ap.from_date && ap.to_date
+      (ap) => ap.fromDate && ap.toDate
     );
 
     const formData = {
@@ -156,7 +156,7 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
   };
 
   const addCompetenceProfile = () => {
-    setCompetenceProfiles([...competenceProfiles, { competence_id: 0, years_of_experience: 0 }]);
+    setCompetenceProfiles([...competenceProfiles, { competenceId: 0, yearsOfExperience: 0 }]);
   };
 
   const removeCompetenceProfile = (index: number) => {
@@ -170,7 +170,7 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
   };
 
   const addAvailabilityPeriod = () => {
-    setAvailabilityPeriods([...availabilityPeriods, { from_date: "", to_date: "" }]);
+    setAvailabilityPeriods([...availabilityPeriods, { fromDate: "", toDate: "" }]);
   };
 
   const removeAvailabilityPeriod = (index: number) => {
@@ -327,8 +327,8 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
                 <Label htmlFor={`competence-${index}`}>Kompetensområde</Label>
                 <Select 
                   id={`competence-${index}`}
-                  value={profile.competence_id}
-                  onChange={(e) => updateCompetenceProfile(index, "competence_id", Number(e.target.value))}
+                  value={profile.competenceId}
+                  onChange={(e) => updateCompetenceProfile(index, "competenceId", Number(e.target.value))}
                   disabled={createAccount.isPending || isLoadingCompetences}
                 >
                   <option value={0}>Välj en kompetens...</option>
@@ -348,8 +348,8 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
                   min="0" 
                   max="99.99"
                   placeholder="0.0"
-                  value={profile.years_of_experience || ""}
-                  onChange={(e) => updateCompetenceProfile(index, "years_of_experience", Number(e.target.value))}
+                  value={profile.yearsOfExperience || ""}
+                  onChange={(e) => updateCompetenceProfile(index, "yearsOfExperience", Number(e.target.value))}
                   disabled={createAccount.isPending}
                 />
               </div>
@@ -395,23 +395,23 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
           {availabilityPeriods.map((period, index) => (
             <div key={index} className="grid gap-4 sm:grid-cols-[1fr_1fr_auto] items-end border p-4 rounded-lg bg-slate-50/50">
               <div className="space-y-2">
-                <Label htmlFor={`from_date-${index}`}>Från datum</Label>
+                <Label htmlFor={`fromDate-${index}`}>Från datum</Label>
                 <Input 
-                  id={`from_date-${index}`}
+                  id={`fromDate-${index}`}
                   type="date"
-                  value={period.from_date}
-                  onChange={(e) => updateAvailabilityPeriod(index, "from_date", e.target.value)}
+                  value={period.fromDate}
+                  onChange={(e) => updateAvailabilityPeriod(index, "fromDate", e.target.value)}
                   disabled={createAccount.isPending}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor={`to_date-${index}`}>Till datum</Label>
+                <Label htmlFor={`toDate-${index}`}>Till datum</Label>
                 <Input 
-                  id={`to_date-${index}`}
+                  id={`toDate-${index}`}
                   type="date"
-                  value={period.to_date}
-                  onChange={(e) => updateAvailabilityPeriod(index, "to_date", e.target.value)}
+                  value={period.toDate}
+                  onChange={(e) => updateAvailabilityPeriod(index, "toDate", e.target.value)}
                   disabled={createAccount.isPending}
                   required
                 />

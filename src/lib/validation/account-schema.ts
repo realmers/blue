@@ -2,22 +2,22 @@ import { z } from "zod";
 
 /**
  * Schema for validating a competence profile entry.
- * @property competence_id - The ID of the competence from the database
- * @property years_of_experience - Years of experience (0-99.99)
+ * @property competenceId - The ID of the competence from the database
+ * @property yearsOfExperience - Years of experience (0-99.99)
  */
 export const competenceProfileSchema = z.object({
-  competence_id: z.number(),
-  years_of_experience: z.number().min(0).max(99.99),
+  competenceId: z.number(),
+  yearsOfExperience: z.number().min(0).max(99.99),
 });
 
 /**
  * Schema for validating an availability period.
- * @property from_date - Start date as ISO string
- * @property to_date - End date as ISO string
+ * @property fromDate - Start date as ISO string
+ * @property toDate - End date as ISO string
  */
 export const availabilitySchema = z.object({
-  from_date: z.string(),
-  to_date: z.string(),
+  fromDate: z.string(),
+  toDate: z.string(),
 });
 
 /**
