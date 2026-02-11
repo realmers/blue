@@ -1,9 +1,19 @@
+"use client";
+
 import Link from "next/link";
+import { authClient } from "@/server/better-auth/client";
+import { useRouter } from "next/navigation";
 
 export const HeaderView = () => {
-  // För Marcus. Dessa variabler kan du använda för inloggningsstatus för Task 5 och 6.
-  const isLoggedIn = false;
-  const userRole = "recruiter";
+  const router = useRouter();
+
+  const { data: session } = authClient.useSession();
+
+  const handleLogout = async () => {
+    await authClient.signOut()
+    router.refresh();
+    router.push("/");
+  }
 
   return (
     // Main container
@@ -63,8 +73,11 @@ export const HeaderView = () => {
 
           {/* Authentication - Task 5 */}
           <div>
-            {isLoggedIn ? (
-              <button className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700">
+            {session ? (
+              <button
+                onClick={handleLogout}
+                className="rounded-md bg-gray-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700"
+              >
                 Logga ut
               </button>
             ) : (

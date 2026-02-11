@@ -51,7 +51,7 @@ export default tseslint.config(
         {
           selector: "variable",
           types: ["boolean"],
-          format: ["camelCase"],
+          format: ["camelCase", "PascalCase"],
           prefix: ["is", "has", "can", "should", "will", "did"],
         },
         {
@@ -98,6 +98,15 @@ export default tseslint.config(
           selector: "variable",
           modifiers: ["const", "global"],
           format: ["UPPER_CASE", "camelCase", "PascalCase"],
+        },
+        {
+          // Allow snake_case for Prisma/database field names
+          selector: ["objectLiteralProperty", "objectLiteralMethod"],
+          format: null,
+          filter: {
+            regex: "^(person_id|role_id|competence_id|years_of_experience|from_date|to_date)$",
+            match: true,
+          },
         },
         {
           selector: ["objectLiteralProperty", "objectLiteralMethod"],
