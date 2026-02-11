@@ -1,25 +1,17 @@
-import { FlatCompat } from "@eslint/eslintrc";
 import tseslint from "typescript-eslint";
-
-const compat = new FlatCompat({
-  baseDirectory: import.meta.dirname,
-});
 
 export default tseslint.config(
   // 1. Global ignores
   {
-    ignores: [".next"],
+    ignores: ["node_modules", ".next", "prisma/seed.ts"],
   },
 
-  // 2. Legacy Next.js config
-  ...compat.extends("next/core-web-vitals"),
-
-  // 3. Recommended TypeScript configurations (Spread directly)
+  // 2. Recommended TypeScript configurations 
   tseslint.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   tseslint.configs.stylisticTypeChecked,
 
-  // 4. Custom Rules and overrides
+  // 3. Custom Rules and overrides
   {
     files: ["**/*.ts", "**/*.tsx"],
     rules: {
@@ -59,7 +51,7 @@ export default tseslint.config(
         {
           selector: "variable",
           types: ["boolean"],
-          format: ["camelCase"],
+          format: ["camelCase", "PascalCase"],
           prefix: ["is", "has", "can", "should", "will", "did"],
         },
         {
@@ -106,6 +98,15 @@ export default tseslint.config(
           selector: "variable",
           modifiers: ["const", "global"],
           format: ["UPPER_CASE", "camelCase", "PascalCase"],
+        },
+        {
+          // Allow snake_case for Prisma/database field names
+          selector: ["objectLiteralProperty", "objectLiteralMethod"],
+          format: null,
+          filter: {
+            regex: "^(person_id|role_id|competence_id|years_of_experience|from_date|to_date)$",
+            match: true,
+          },
         },
         {
           selector: ["objectLiteralProperty", "objectLiteralMethod"],
@@ -156,7 +157,7 @@ export default tseslint.config(
     },
   },
 
-  // 5. Global Language/Linter Options
+  // 4. Global Language/Linter Options
   {
     linterOptions: {
       reportUnusedDisableDirectives: true,
