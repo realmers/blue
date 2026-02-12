@@ -36,7 +36,8 @@ model User {
   availability       availability[]
   competence_profile competence_profile[]
 
-  displayUsername String?
+  displayUsername     String?
+  application_status ApplicationStatus @default(unhandled)
 
   @@map("user")
 }
@@ -86,6 +87,12 @@ model Verification {
 
   @@map("verification")
   @@index([identifier])
+}
+
+enum ApplicationStatus {
+  unhandled
+  accepted
+  rejected
 }
 
 // New Domain Tables
