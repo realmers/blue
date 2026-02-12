@@ -167,14 +167,14 @@ export const protectedProcedure = t.procedure
 
 
 /** Reusable middleware that enforces users have recruiter role before running the procedure. */
-const enforceUserIsrecruiter = t.middleware(({ ctx, next }) => {
+const enforceUserIsRecruiter = t.middleware(({ ctx, next }) => {
   if (!ctx.session?.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   if (ctx.session.user.role !== "recruiter") {
     throw new TRPCError({
       code: "FORBIDDEN",
-      message: "You need recruiter privileges to perform this action",
+      message: "Du behöver rekryterarbehörighet för att utföra den här åtgärden",
     });
   }
 
@@ -194,4 +194,4 @@ const enforceUserIsrecruiter = t.middleware(({ ctx, next }) => {
  */
 export const recruiterProcedure = t.procedure
   .use(timingMiddleware)
-  .use(enforceUserIsrecruiter);
+  .use(enforceUserIsRecruiter);

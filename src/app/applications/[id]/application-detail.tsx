@@ -99,12 +99,12 @@ export function ApplicationDetail() {
     );
   }
 
-  const handleStatusChange = (newStatus: string) => {
+  const handleStatusChange = (newStatus: ApplicationStatus) => {
     setConflictError(null);
     setSuccessMessage(null);
     updateStatus.mutate({
       id: application.id,
-      status: newStatus as ApplicationStatus,
+      status: newStatus,
       expectedUpdatedAt: application.updatedAt,
     });
   };
