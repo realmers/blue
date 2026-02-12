@@ -42,7 +42,6 @@ export const createAccountSchema = z.object({
     .min(8, "Lösenordet måste vara minst 8 tecken")
     .max(64, "Lösenordet får vara max 64 tecken"),
   email: z
-    .string()
     .email("Ange en giltig e-postadress"),
   name: z
     .string()
@@ -60,6 +59,15 @@ export const createAccountSchema = z.object({
   availabilityPeriods: z.array(availabilitySchema).optional(),
 });
 
+export const loginUsernameSchema = z.object({
+  username: z.string().min(3, "Felaktigt användarnamn eller lösenord").max(50, "Felaktigt användarnamn eller lösenord"),
+  password: z.string().min(8, "Felaktigt användarnamn eller lösenord").max(64, "Felaktigt användarnamn eller lösenord"),
+});
+
+export const loginMagicLinkSchema = z.object({
+  email: z.email(),
+});
+
 /**
  * TypeScript type inferred from createAccountSchema.
  * This type is used for function parameters and return types.
@@ -71,3 +79,9 @@ export type CompetenceProfile = z.infer<typeof competenceProfileSchema>;
 
 /** Inferred type for an availability period. */
 export type AvailabilityPeriod = z.infer<typeof availabilitySchema>;
+
+/** Inferred type for login with username and password. */
+export type LoginUsernameInput = z.infer<typeof loginUsernameSchema>;
+
+/** Inferred type for login with magic link (email). */
+export type LoginMagicLinkInput = z.infer<typeof loginMagicLinkSchema>;
