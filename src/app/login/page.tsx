@@ -15,6 +15,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { loginUsernameSchema } from "@/lib/validation/account-schema";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,8 +32,16 @@ export default function LoginPage() {
   async function onSubmitUsername(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
+    const validation = loginUsernameSchema.safeParse({ username, password });
+
+    if (!validation.success) {
+      const errorMessage = validation.error.issues[0]?.message ?? "Ett fel uppstod";
+      setError(errorMessage);
+      return;
+    }
+
+    setLoading(true);
     try {
       const res = await authClient.signIn.username({ username, password });
       if (res.error) {
