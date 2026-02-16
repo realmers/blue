@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export const FooterView = () => {
+export const Footer = () => {
   return (
     /*  Footer container */
     <footer className="w-full border-t border-gray-800 bg-black text-white">

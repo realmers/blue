@@ -4,7 +4,7 @@ import Link from "next/link";
 import { authClient } from "@/server/better-auth/client";
 import { useRouter } from "next/navigation";
 
-export const HeaderView = () => {
+export const Header = () => {
   const router = useRouter();
 
   const { data: session } = authClient.useSession();
