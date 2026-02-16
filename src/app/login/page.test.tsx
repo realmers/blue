@@ -1,12 +1,12 @@
 /**
  * Integrationstest för inloggningssidan (loginPage).
- * 
+ *
  * Testar hela flödet från rendering till interaktion:
  * - Mockar serveranrop (authClient) och routing (useRouter).
  * - Testar inloggning med användarnamn/lösenord, både lyckad och misslyckad.
  * - Testar "Magic Link"-flödet.
  * - Verifierar att felmeddelanden visas för användaren.
- * 
+ *
  * Integration Layer test.
  */
 
@@ -111,7 +111,7 @@ describe("Page: Login", () => {
   });
 
   it("borde calla signIn.magicLink när email är sibmittad", async () => {
-    // Mocka att magic link-anropet lyckas.
+    // Mocka att magic länk anropet lyckas.
     vi.mocked(authClient.signIn.magicLink).mockResolvedValue({
       data: {},
       error: null,
@@ -137,7 +137,7 @@ describe("Page: Login", () => {
       });
     });
 
-    // Verifiera att success meddelandet visas (baserat på din kod: "Länk skickad!").
+    // Verifiera att success meddelandet visas ("Länk skickad!").
     expect(screen.getByText(/länk skickad!/i)).toBeInTheDocument();
   });
 
@@ -252,11 +252,7 @@ describe("Page: Login", () => {
     await waitFor(() => {
       // Verifiera att servern INTE anropades
       expect(signInSpy).not.toHaveBeenCalled();
-
-      // Verifiera att vi får exakt det felmeddelande som står i din schema-fil
-      // Eftersom du har samma felmeddelande för både username och password i schemat,
-      // kommer getAllByText hitta två element, eller getByText hitta det om React bara visar ett.
-      // Det säkraste här är att kolla att texten finns i dokumentet.
+      // Verifiera att vi får exakt det felmeddelande som står i schema-filen.
       expect(
         screen.getAllByText("Felaktigt användarnamn eller lösenord")[0],
       ).toBeInTheDocument();
@@ -287,9 +283,9 @@ describe("Page: Login", () => {
     });
   });
 
-  // 3. Testa "Edge case" för catch-blocket (Non-Error object thrown).
+  // 3. Testa "Edge case" för catch blocket.
   it("borde hantera om oväntat fel kastas", async () => {
-    // Vi kastar en sträng istället för ett Error-objekt.
+    // Vi kastar en sträng istället för ett Error objekt.
     vi.mocked(authClient.signIn.username).mockRejectedValue(
       "Bara en sträng, inget Error-objekt",
     );
