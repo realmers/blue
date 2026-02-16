@@ -11,7 +11,7 @@ import { createAccountSchema } from './account-schema';
 describe('Validation: createAccountSchema', () => {
   it('should fail if username is too short', () => {
     const result = createAccountSchema.safeParse({
-      username: 'yo', // För kort input
+      username: 'yo', // För kort användarnamn input
       password: 'validpassword123',
       email: 'test@example.com',
       name: 'Test',
@@ -32,4 +32,4 @@ describe('Validation: createAccountSchema', () => {
     });
     expect(result.success).toBe(true);
   });
-});
+})

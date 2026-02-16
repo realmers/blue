@@ -1,33 +1,38 @@
 /**
- * @file create-account-form.test.tsx
- * @description Omfattande tester för registreringsformuläret.
+ * Tester för registreringsformuläret.
+ * 
  * Täcker:
  * - Rendering och grundläggande interaktion.
  * - Dynamiska fält (lägga till/ta bort kompetens och tillgänglighet).
  * - Klientvalidering (Zod).
  * - Serverfelhantering (fångar upp onError callbacks).
- * - Framgångsrik registrering.
+ * - Lyckad registrering.
+ * 
+ * Integration layer test.
  */
-import { act } from 'react';
-import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { CreateAccountForm } from './create-account-form';
-import { api } from '@/trpc/react';
 
-// 1. Mocka Next.js router
+import { act } from "react";
+import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { CreateAccountForm } from "./create-account-form";
+import { api } from "@/trpc/react";
+
+// Mocka Next.js router. Kontrollerar att routern försöker byta sida.
 const pushMock = vi.fn();
-vi.mock('next/navigation', () => ({
+vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: pushMock,
   }),
 }));
 
-// 2. Mocka TRPC
-// Vi behöver komma åt onError/onSuccess som komponenten skickar till useMutation
+// Mocka TRPC
+// Behöver komma åt onError/onSuccess som komponenten skickar till useMutation.
 const useMutationMock = vi.fn();
+
+// Ersätter den funktionen som faktiskt skickar datan till servern.
 const mutateMock = vi.fn();
 
-vi.mock('@/trpc/react', () => ({
+vi.mock("@/trpc/react", () => ({
   api: {
     user: {
       getCompetences: {
@@ -46,47 +51,51 @@ vi.mock('@/trpc/react', () => ({
   },
 }));
 
-describe('Component: CreateAccountForm', () => {
+describe("create-account-form", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Default mock data för kompetenser
+    // Mock data för dropdown meny.
     vi.mocked(api.user.getCompetences.useQuery).mockReturnValue({
       data: [
-        { competence_id: 1, name: 'Biljettförsäljning' },
-        { competence_id: 2, name: 'Attraktioner' },
+        { competence_id: 1, name: "Biljettförsäljning" },
+        { competence_id: 2, name: "Attraktioner" },
       ],
       isLoading: false,
     } as any);
   });
 
-  it('should render form correctly', () => {
+  it("borde rendera formuläret korrekt", () => {
     render(<CreateAccountForm />);
-    expect(screen.getByText('Kontouppgifter')).toBeInTheDocument();
-    expect(screen.getByText('Personuppgifter')).toBeInTheDocument();
+    expect(screen.getByText("Kontouppgifter")).toBeInTheDocument();
+    expect(screen.getByText("Personuppgifter")).toBeInTheDocument();
   });
 
-  // --- TÄCKNING FÖR DYNAMISKA FÄLT (Rader 163, 173, 361, 177) ---
-  it('should handle adding and removing competence profiles', async () => {
+  // --- TESTAR DYNAMISKA FÄLT I FORMULÄRET ---
+  it("borde hantera att lägga till och ta bort kompetens", async () => {
     render(<CreateAccountForm />);
 
     // Lägg till en rad
-    const addBtn = screen.getByText('+ Lägg till ytterligare kompetens');
+    const addBtn = screen.getByText("+ Lägg till ytterligare kompetens");
     fireEvent.click(addBtn);
 
     await waitFor(() => {
       expect(screen.getAllByLabelText(/kompetensområde/i)).toHaveLength(2);
     });
 
-    // Ta bort den andra raden (papperskorgen)
-    // Vi letar efter knappar som innehåller en ikon (vanligtvis SVG) inuti kompetens-sektionen
-    const removeBtns = screen.getAllByRole('button').filter(btn => 
-      btn.innerHTML.includes('svg') || btn.className.includes('text-red-600')
-    );
-    
-    // Klicka på den första remove-knappen vi hittar (bör vara för den nya raden)
+    // Ta bort den andra raden (papperskorgsknapp)
+    // Vi letar efter knappar som innehåller en ikon inuti kompetens sektionen.
+    const removeBtns = screen
+      .getAllByRole("button")
+      .filter(
+        (btn) =>
+          btn.innerHTML.includes("svg") ||
+          btn.className.includes("text-red-600"),
+      );
+
+    // Klicka på den första remove knappen vi hittar (bör vara för den nya raden på sidan)
     if (removeBtns[0]) {
-        fireEvent.click(removeBtns[0]);
+      fireEvent.click(removeBtns[0]);
     }
 
     await waitFor(() => {
@@ -94,23 +103,27 @@ describe('Component: CreateAccountForm', () => {
     });
   });
 
-  it('should handle adding and removing availability periods', async () => {
+  it("borde hantera lägga till och ta bort tillgänliga perioder", async () => {
     render(<CreateAccountForm />);
 
-    const addBtn = screen.getByText('+ Lägg till tillgänglighetsperiod');
+    const addBtn = screen.getByText("+ Lägg till tillgänglighetsperiod");
     fireEvent.click(addBtn);
 
     await waitFor(() => {
       expect(screen.getAllByLabelText(/från datum/i)).toHaveLength(2);
     });
 
-    // Ta bort rad
-    const removeBtns = screen.getAllByRole('button').filter(btn => 
-        btn.innerHTML.includes('svg') || btn.className.includes('text-red-600')
+    // Ta bort rad för tillgänglighets period
+    const removeBtns = screen
+      .getAllByRole("button")
+      .filter(
+        (btn) =>
+          btn.innerHTML.includes("svg") ||
+          btn.className.includes("text-red-600"),
       );
-      
+
     if (removeBtns[0]) {
-        fireEvent.click(removeBtns[0]);
+      fireEvent.click(removeBtns[0]);
     }
 
     await waitFor(() => {
@@ -118,64 +131,68 @@ describe('Component: CreateAccountForm', () => {
     });
   });
 
-  // --- TÄCKNING FÖR CLIENT-SIDE VALIDATION (Rader 144-152) ---
-  it('should display client-side validation errors', async () => {
+  // --- TESTAR CLIENT SIDE VALIDATION ---
+  it("borde visa client side validation errors", async () => {
     render(<CreateAccountForm />);
-    
+
     // Skicka tomt formulär
-    const submitBtn = screen.getByRole('button', { name: /^registrera$/i });
+    const submitBtn = screen.getByRole("button", { name: /^registrera$/i });
     fireEvent.click(submitBtn);
 
-    // Verifiera att mutate INTE anropades
+    // Verifiera att mutate INTE anropades.
     expect(mutateMock).not.toHaveBeenCalled();
-
-    // Verifiera att Zod-fel visas (genom att kolla att fälten markeras eller text dyker upp)
-    // Eftersom din komponent renderar felmeddelanden under input:
-    // "p className='text-sm text-red-600'"
-    // Vi kan kolla efter texter som "Förnamn är obligatoriskt" om det finns i schemat, 
-    // eller bara kolla att errors state har uppdaterats (via fieldErrors rendering)
-    // Enligt din kod: setFieldErrors(errors).
-    
-    // Vi kan anta att Zod schemat kräver fält och ger felmeddelanden.
-    // Vi kollar att mutate inte kördes, vilket bevisar att "if (!result.success)" grenen kördes.
   });
 
-  // --- TÄCKNING FÖR SERVER FELHANTERING (Rader 75-108) ---
-  it('should handle server-side errors correctly', async () => {
+  // --- TEST FÖR SERVER FELHANTERING ---
+  it("borde hantera server side errors korrekt", async () => {
     render(<CreateAccountForm />);
-    
-    // 1. Trigga en fake submit för att registrera callbacks
-    // Fyll i minimum data så vi passerar klientvalidering
-    fireEvent.change(screen.getByLabelText(/användarnamn/i), { target: { value: 'user' } });
-    fireEvent.change(screen.getByLabelText(/lösenord/i), { target: { value: 'pass123' } });
-    fireEvent.change(screen.getByLabelText(/e-postadress/i), { target: { value: 'email@test.com' } });
-    fireEvent.change(screen.getByLabelText(/förnamn/i), { target: { value: 'Name' } });
-    fireEvent.change(screen.getByLabelText(/efternamn/i), { target: { value: 'Sur' } });
-    fireEvent.change(screen.getByLabelText(/personnummer/i), { target: { value: '199001011234' } });
+
+    //Provocera fram onError för fel antal tecken på pw.
+    // Först mocka ett tillräckligt formulär för att registrera callbacks efter submit.
+    // Fyll i minimum data så vi passerar klientvalidering.
+    fireEvent.change(screen.getByLabelText(/användarnamn/i), {
+      target: { value: "user" },
+    });
+    fireEvent.change(screen.getByLabelText(/lösenord/i), {
+      target: { value: "pass123" },
+    });
+    fireEvent.change(screen.getByLabelText(/e-postadress/i), {
+      target: { value: "email@test.com" },
+    });
+    fireEvent.change(screen.getByLabelText(/förnamn/i), {
+      target: { value: "Name" },
+    });
+    fireEvent.change(screen.getByLabelText(/efternamn/i), {
+      target: { value: "Sur" },
+    });
+    fireEvent.change(screen.getByLabelText(/personnummer/i), {
+      target: { value: "199001011234" },
+    });
 
     // Kompetens
     const compSelect = screen.getAllByLabelText(/kompetensområde/i)[0];
-    if (compSelect) fireEvent.change(compSelect, { target: { value: '1' } });
+    if (compSelect) fireEvent.change(compSelect, { target: { value: "1" } });
     const expInput = screen.getAllByLabelText(/års erfarenhet/i)[0];
-    if (expInput) fireEvent.change(expInput, { target: { value: '1' } });
+    if (expInput) fireEvent.change(expInput, { target: { value: "1" } });
 
     // Tillgänglighet
     const fromInput = screen.getAllByLabelText(/från datum/i)[0];
-    if (fromInput) fireEvent.change(fromInput, { target: { value: '2024-01-01' } });
+    if (fromInput)
+      fireEvent.change(fromInput, { target: { value: "2024-01-01" } });
     const toInput = screen.getAllByLabelText(/till datum/i)[0];
-    if (toInput) fireEvent.change(toInput, { target: { value: '2024-01-02' } });
+    if (toInput) fireEvent.change(toInput, { target: { value: "2024-01-02" } });
 
-    const submitBtn = screen.getByRole('button', { name: /^registrera$/i });
+    const submitBtn = screen.getByRole("button", { name: /^registrera$/i });
     fireEvent.click(submitBtn);
 
     // Nu har useMutation anropats och vi kan hämta onError funktionen
     expect(useMutationMock).toHaveBeenCalled();
     const mutationOptions = useMutationMock.mock.calls[0]?.[0];
-    
+
     if (!mutationOptions) {
-      throw new Error('Mutation options not found');
+      throw new Error("Mutation options not found");
     }
-    
+
     const onError = mutationOptions.onError;
 
     expect(onError).toBeDefined();
@@ -186,80 +203,89 @@ describe('Component: CreateAccountForm', () => {
         data: {
           zodError: {
             fieldErrors: {
-              username: ['Användarnamnet är upptaget'],
+              username: ["Användarnamnet är upptaget"],
             },
           },
         },
       });
     });
-    expect(screen.getByText('Användarnamnet är upptaget')).toBeInTheDocument();
+    expect(screen.getByText("Användarnamnet är upptaget")).toBeInTheDocument();
 
-    // --- TEST FALL 2: Generiskt E-post fel ---
+    // --- TEST FALL 2: Upptaget E-postaddress fel ---
     act(() => {
-      onError({ message: 'E-post finns redan' });
+      onError({ message: "E-post finns redan" });
     });
     // Vi kollar efter feltexten under e-post fältet
-    // (Förutsätter att din komponent renderar {fieldErrors.email})
     // Texten "E-post finns redan" bör dyka upp
     expect(screen.getByText(/E-post finns redan/i)).toBeInTheDocument();
 
     // --- TEST FALL 3: Personnummer fel ---
     act(() => {
-      onError({ message: 'Ogiltigt pnr' });
+      onError({ message: "pnr finns redan" });
     });
-    expect(screen.getByText(/Ogiltigt pnr/i)).toBeInTheDocument();
+    expect(screen.getByText(/pnr finns redan/i)).toBeInTheDocument();
 
-    // --- TEST FALL 4: Oväntat fel ---
+    // --- TEST FALL 4: Oväntat fel, frontend känner inte igen "Boom!" ---
     act(() => {
-      onError({ message: 'Boom!' });
+      onError({ message: "Boom!" });
     });
     expect(screen.getByText(/Ett oväntat fel uppstod/i)).toBeInTheDocument();
   });
 
-// --- HAPPY PATH ---
-  it('should submit successfully', async () => {
+  // --- TEST FÖR ALLT RÄTT I REGI ---
+  it("should submit successfully", async () => {
     render(<CreateAccountForm />);
-    
+
     // Fyll i data...
-    fireEvent.change(screen.getByLabelText(/användarnamn/i), { target: { value: 'validuser' } });
-    
-    // ÄNDRAT: Lösenordet är nu tillräckligt långt (>8 tecken)
-    fireEvent.change(screen.getByLabelText(/lösenord/i), { target: { value: 'password123' } }); 
-    
-    fireEvent.change(screen.getByLabelText(/e-postadress/i), { target: { value: 'valid@test.com' } });
-    fireEvent.change(screen.getByLabelText(/förnamn/i), { target: { value: 'Valid' } });
-    fireEvent.change(screen.getByLabelText(/efternamn/i), { target: { value: 'User' } });
-    fireEvent.change(screen.getByLabelText(/personnummer/i), { target: { value: '199001011234' } });
+    fireEvent.change(screen.getByLabelText(/användarnamn/i), {
+      target: { value: "validuser" },
+    });
+
+    // Lösenordet är tillräckligt långt (>8 tecken)
+    fireEvent.change(screen.getByLabelText(/lösenord/i), {
+      target: { value: "password123" },
+    });
+
+    fireEvent.change(screen.getByLabelText(/e-postadress/i), {
+      target: { value: "valid@test.com" },
+    });
+    fireEvent.change(screen.getByLabelText(/förnamn/i), {
+      target: { value: "Valid" },
+    });
+    fireEvent.change(screen.getByLabelText(/efternamn/i), {
+      target: { value: "User" },
+    });
+    fireEvent.change(screen.getByLabelText(/personnummer/i), {
+      target: { value: "199001011234" },
+    });
 
     // Tillgänglighet
-    // Vi måste hantera att elementen kanske inte finns direkt om statet strular, men i detta fall borde de finnas.
-    // Använd getAllByLabelText för säkerhets skull om labeln inte är unik (men här är den unik per rad).
     const fromInputs = screen.getAllByLabelText(/från datum/i);
-    if (fromInputs[0]) fireEvent.change(fromInputs[0], { target: { value: '2024-01-01' } });
-    
-    const toInputs = screen.getAllByLabelText(/till datum/i);
-    if (toInputs[0]) fireEvent.change(toInputs[0], { target: { value: '2024-01-02' } });
+    if (fromInputs[0])
+      fireEvent.change(fromInputs[0], { target: { value: "2024-01-01" } });
 
-    const submitBtn = screen.getByRole('button', { name: /^registrera$/i });
+    const toInputs = screen.getAllByLabelText(/till datum/i);
+    if (toInputs[0])
+      fireEvent.change(toInputs[0], { target: { value: "2024-01-02" } });
+
+    const submitBtn = screen.getByRole("button", { name: /^registrera$/i });
     fireEvent.click(submitBtn);
 
     // Nu bör valideringen passera och mocken anropas
     await waitFor(() => {
-        expect(mutateMock).toHaveBeenCalled();
+      expect(mutateMock).toHaveBeenCalled();
     });
-    
-    // Testa onSuccess callbacken
-    // Vi hämtar det senaste anropet till useMutation för att få options
-    // OBS: Beroende på hur många gånger komponenten renderats om kan det finnas flera anrop.
-    // Vi tar det sista.
+
+    // Testa onSuccess callbacken, alltså sidan man kommer till om ansökan gick igenom.
+    // Vi hämtar det senaste anropet till useMutation för att få options.
     const calls = useMutationMock.mock.calls;
     const mutationOptions = calls[calls.length - 1]?.[0];
-    
+
     if (!mutationOptions) {
-      throw new Error('Mutation options not found');
+      throw new Error("Mutation options hittades inte");
     }
-    
-      mutationOptions.onSuccess();
-      expect(pushMock).toHaveBeenCalledWith('/applicants');
-    });
+
+    mutationOptions.onSuccess();
+    expect(pushMock).toHaveBeenCalledWith("/applicants");
   });
+});
