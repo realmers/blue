@@ -40,7 +40,7 @@ describe("Page: Login", () => {
     vi.clearAllMocks();
   });
 
-  it("should render login form correctly", () => {
+  it("borde rendera login korrekt", () => {
     render(<LoginPage />);
     // Kollar att rubriker och fält finns på plats.
     expect(
@@ -50,7 +50,7 @@ describe("Page: Login", () => {
     expect(screen.getByLabelText(/lösenord/i)).toBeInTheDocument();
   });
 
-  it("should call signIn.username when form is submitted", async () => {
+  it("borde calla signIn.username när ett formulär är submittad", async () => {
     // Mocka att inloggningen lyckas.
     vi.mocked(authClient.signIn.username).mockResolvedValue({
       data: {},
@@ -83,7 +83,7 @@ describe("Page: Login", () => {
     expect(pushMock).toHaveBeenCalledWith("/");
   });
 
-  it("should show error message if login fails", async () => {
+  it("borde visa error meddelande om login misslyckas", async () => {
     // Mocka att inloggningen misslyckas.
     vi.mocked(authClient.signIn.username).mockResolvedValue({
       data: null,
@@ -110,7 +110,7 @@ describe("Page: Login", () => {
     });
   });
 
-  it("should call signIn.magicLink when email form is submitted", async () => {
+  it("borde calla signIn.magicLink när email är sibmittad", async () => {
     // Mocka att magic link-anropet lyckas.
     vi.mocked(authClient.signIn.magicLink).mockResolvedValue({
       data: {},
@@ -141,7 +141,7 @@ describe("Page: Login", () => {
     expect(screen.getByText(/länk skickad!/i)).toBeInTheDocument();
   });
 
-  it("should show error message if magic link fails", async () => {
+  it("borde visa fel meddelande om magic link misslyckas", async () => {
     // Simulera att servern svarar med fel på magic link.
     vi.mocked(authClient.signIn.magicLink).mockResolvedValue({
       data: null,
@@ -163,7 +163,7 @@ describe("Page: Login", () => {
     });
   });
 
-  it("should allow retrying magic link (reset form)", async () => {
+  it("borde försöaka med med magic link igen (reset form)", async () => {
     // 1. Skicka länken först (Success).
     vi.mocked(authClient.signIn.magicLink).mockResolvedValue({
       data: {},
@@ -191,7 +191,7 @@ describe("Page: Login", () => {
     expect(screen.queryByText(/länk skickad!/i)).not.toBeInTheDocument();
   });
 
-  it("should handle unexpected errors (exceptions) for username login", async () => {
+  it("borde hantera oförväntade errors för användarnamn login", async () => {
     // Simulera att funktionen kraschar helt (kastar Error).
     vi.mocked(authClient.signIn.username).mockRejectedValue(
       new Error("Nätverksfel"),
@@ -212,7 +212,7 @@ describe("Page: Login", () => {
     });
   });
 
-  it("should handle unexpected errors (exceptions) for username login", async () => {
+  it("borde hantera okända fel för användarnamn login", async () => {
     vi.mocked(authClient.signIn.username).mockRejectedValue(
       new Error("Nätverksfel"),
     );
@@ -233,7 +233,7 @@ describe("Page: Login", () => {
   });
 
   // 1. Testa att Zod stoppar ogiltig input (klientvalidering).
-  it("should show validation error if inputs are invalid (Client-side validation)", async () => {
+  it("borde visa validerings error om input är fel (Client-side validation)", async () => {
     const signInSpy = vi.mocked(authClient.signIn.username);
     render(<LoginPage />);
 
@@ -264,7 +264,7 @@ describe("Page: Login", () => {
   });
 
   // 2. Testa Exception (krasch) i Magic Link-flödet.
-  it("should handle unexpected errors (exceptions) for magic link", async () => {
+  it("borde hantera okända errors för magic link", async () => {
     // Simulera att funktionen kraschar (kastar Error).
     vi.mocked(authClient.signIn.magicLink).mockRejectedValue(
       new Error("Kunde inte nå servern"),
@@ -288,7 +288,7 @@ describe("Page: Login", () => {
   });
 
   // 3. Testa "Edge case" för catch-blocket (Non-Error object thrown).
-  it("should handle non-Error objects thrown (Generic fallback error)", async () => {
+  it("borde hantera om oväntat fel kastas", async () => {
     // Vi kastar en sträng istället för ett Error-objekt.
     vi.mocked(authClient.signIn.username).mockRejectedValue(
       "Bara en sträng, inget Error-objekt",

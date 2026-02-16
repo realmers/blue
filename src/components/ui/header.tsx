@@ -10,10 +10,10 @@ export const Header = () => {
   const { data: session } = authClient.useSession();
 
   const handleLogout = async () => {
-    await authClient.signOut()
+    await authClient.signOut();
     router.refresh();
     router.push("/");
-  }
+  };
 
   return (
     // Main container
@@ -43,33 +43,8 @@ export const Header = () => {
                   Hem
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/somewhere2"
-                  className="text-gray-300 transition-colors hover:text-white"
-                >
-                  Länk2
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/somewhere3"
-                  className="text-gray-300 transition-colors hover:text-white"
-                >
-                  Länk3
-                </Link>
-              </li>
             </ul>
           </nav>
-
-          {/* Language Switcher - Relevant för Task 13, om vi bestämmer oss för att implementera det. */}
-          <div className="flex items-center gap-2 border-l border-gray-700 pl-6 text-sm text-gray-400">
-            <button className="font-medium text-white transition-colors hover:text-white">
-              EN
-            </button>
-            <span>/</span>
-            <button className="transition-colors hover:text-white">SV</button>
-          </div>
 
           {/* Authentication - Task 5 */}
           <div>
