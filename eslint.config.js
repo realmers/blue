@@ -104,7 +104,8 @@ export default tseslint.config(
           selector: ["objectLiteralProperty", "objectLiteralMethod"],
           format: null,
           filter: {
-            regex: "^(person_id|role_id|competence_id|years_of_experience|from_date|to_date)$",
+            regex:
+              "^(person_id|role_id|competence_id|competence_profile|competence_profile_id|availability_id|years_of_experience|from_date|to_date|application_status)$",
             match: true,
           },
         },

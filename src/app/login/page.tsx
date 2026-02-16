@@ -15,24 +15,33 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { loginUsernameSchema } from "@/lib/validation/account-schema";
 
-export default function SignInPage() {
+export default function LoginPage() {
   const router = useRouter();
   
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   
   const [email, setEmail] = useState("");
-  const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [ismagicLinkSent, setMagicLinkSent] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isloading, setLoading] = useState(false);
 
   async function onSubmitUsername(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
+    const validation = loginUsernameSchema.safeParse({ username, password });
+
+    if (!validation.success) {
+      const errorMessage = validation.error.issues[0]?.message ?? "Ett fel uppstod";
+      setError(errorMessage);
+      return;
+    }
+
+    setLoading(true);
     try {
       const res = await authClient.signIn.username({ username, password });
       if (res.error) {
@@ -40,8 +49,9 @@ export default function SignInPage() {
       } else {
         router.push("/");
       }
-    } catch (err: any) {
-      setError(err.message || "Ett oväntat fel inträffade");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Ett oväntat fel inträffade";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -64,8 +74,9 @@ export default function SignInPage() {
         setMagicLinkSent(true);
         // check terminal for the link!
       }
-    } catch (err: any) {
-      setError(err.message || "Ett oväntat fel inträffade");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Ett oväntat fel inträffade";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -93,7 +104,7 @@ export default function SignInPage() {
             )}
 
             {/* Magic link */}
-            {!magicLinkSent ? (
+            {!ismagicLinkSent ? (
               <form onSubmit={onSubmitMagicLink} className="grid gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Logga in med E-post</Label>
@@ -108,10 +119,11 @@ export default function SignInPage() {
                 </div>
                 <Button
                   type="submit"
+                  variant="outline"
                   className="w-full bg-black text-white"
-                  disabled={loading}
+                  disabled={isloading}
                 >
-                  {loading ? "Skickar..." : "Skicka inloggningslänk"}
+                  {isloading ? "Skickar..." : "Skicka inloggningslänk"}
                 </Button>
               </form>
             ) : (
@@ -136,7 +148,7 @@ export default function SignInPage() {
                 <span className="w-full border-t border-slate-200" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-slate-500">Eller med lösenord</span>
+                <span className="bg-white px-2 text-slate-500">Eller med användarnamn & lösenord</span>
               </div>
             </div>
 
@@ -164,10 +176,10 @@ export default function SignInPage() {
               <Button
                 type="submit"
                 variant="outline"
-                className="w-full border-slate-300 hover:bg-slate-50"
-                disabled={loading}
+                className="w-full bg-black text-white"
+                disabled={isloading}
               >
-                Logga in med lösenord
+                Logga in
               </Button>
             </form>
 
@@ -177,7 +189,7 @@ export default function SignInPage() {
             <div className="text-center text-sm text-slate-600">
               Har du inget konto?{" "}
               <Link
-                href="/auth/sign-up"
+                href="/create-account"
                 className="font-medium text-slate-900 underline underline-offset-4 hover:text-slate-700"
               >
                 Skapa konto
