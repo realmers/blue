@@ -71,6 +71,9 @@ importers:
       pino:
         specifier: ^10.3.0
         version: 10.3.0
+      pino-abstract-transport:
+        specifier: ^3.0.0
+        version: 3.0.0
       radix-ui:
         specifier: ^1.4.3
         version: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.9))(@types/react@19.2.9)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
