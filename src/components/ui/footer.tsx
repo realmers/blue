@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export const FooterView = () => {
+export const Footer = () => {
   return (
     /*  Footer container */
     <footer className="w-full border-t border-gray-800 bg-black text-white">
@@ -21,7 +21,7 @@ export const FooterView = () => {
 
             <p className="text-sm text-gray-400">
               Som KTH student, med minium 4 års slutförda studier, passar du
-              perfekt vid fritösen stationen, i en av våra fantastiska hamburger
+              perfekt vid fritös stationen, i en av våra fantastiska hamburger
               kiosker.
             </p>
           </div>

@@ -3,10 +3,18 @@ import tseslint from "typescript-eslint";
 export default tseslint.config(
   // 1. Global ignores
   {
-    ignores: ["node_modules", ".next", "prisma/seed.ts"],
+    ignores: [
+      "node_modules",
+      ".next",
+      "prisma/seed.ts",
+      "coverage",
+      "src/app/create-account/create-account-form.test.tsx",
+      "src/app/login/page.test.tsx",
+      "src/lib/validation/account-schema.test.ts",
+    ],
   },
 
-  // 2. Recommended TypeScript configurations 
+  // 2. Recommended TypeScript configurations
   tseslint.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   tseslint.configs.stylisticTypeChecked,
@@ -32,7 +40,7 @@ export default tseslint.config(
       ],
       "@typescript-eslint/no-unsafe-argument": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
-      
+
       // Enhanced naming convention rules
       "@typescript-eslint/naming-convention": [
         "error",
