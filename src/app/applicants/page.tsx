@@ -9,6 +9,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { AvailabilityModal } from "./availability-modal";
 
 export default function ApplicantsPage() {
   return (
@@ -25,11 +26,14 @@ export default function ApplicantsPage() {
             Din registrering har mottagits.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p className="text-slate-600">
             Vi har tagit emot dina uppgifter och kommer att kontakta dig så snart 
             vi har lediga tjänster som matchar din profil.
           </p>
+          <div className="pt-2">
+            <AvailabilityModal />
+          </div>
         </CardContent>
         <CardFooter className="flex justify-center pt-4">
           <Link href="/">
