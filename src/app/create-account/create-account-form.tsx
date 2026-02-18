@@ -15,6 +15,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { CalendarIcon, UserIcon, BriefcaseIcon, LockIcon, Trash2Icon, Loader2Icon } from "lucide-react";
+import { authClient } from "@/server/better-auth/client";
 
 function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
@@ -71,8 +72,10 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
   const { data: competences, isLoading: isLoadingCompetences } = api.user.getCompetences.useQuery();
 
   const createAccount = api.user.createAccount.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await authClient.signIn.username({ username, password });
       router.push("/applicants");
+
     },
     onError: (err) => {
       // Check if it's a Zod validation error (fallback just in case)
