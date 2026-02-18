@@ -1,5 +1,8 @@
 name: main
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
@@ -38,6 +41,9 @@ jobs:
 
       - name: Type Check
         run: npx tsc --noEmit
+
+      - name: Run Tests
+        run: pnpm run test
 
       - name: Production Build Check
         run: pnpm run build
