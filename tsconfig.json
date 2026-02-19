@@ -19,11 +19,7 @@
     "noImplicitOverride": true,
     "useUnknownInCatchVariables": true, // Use 'unknown' instead of 'any' for catch clause variables (TS 4.4+)
     /* Bundled projects */
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "ES2023"
-    ],
+    "lib": ["dom", "dom.iterable", "ES2023"],
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -37,9 +33,7 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
   "include": [

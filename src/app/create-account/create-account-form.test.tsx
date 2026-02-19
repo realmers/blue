@@ -1,13 +1,13 @@
 /**
  * Tester för registreringsformuläret.
- * 
+ *
  * Täcker:
  * - Rendering och grundläggande interaktion.
  * - Dynamiska fält (lägga till/ta bort kompetens och tillgänglighet).
  * - Klientvalidering (Zod).
  * - Serverfelhantering (fångar upp onError callbacks).
  * - Lyckad registrering.
- * 
+ *
  * Integration layer test.
  */
 
@@ -25,11 +25,11 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
-// Mocka authClient
+// Mocka better-auth klienten så att signIn inte gör ett riktigt HTTP-anrop.
 vi.mock("@/server/better-auth/client", () => ({
   authClient: {
     signIn: {
-      username: vi.fn().mockResolvedValue({}), // Pretend login succeeded immediately
+      username: vi.fn().mockResolvedValue({}),
     },
   },
 }));
@@ -74,6 +74,7 @@ describe("create-account-form", () => {
     } as any);
   });
 
+  // Verifierar att formulärets rubriker och sektioner renderas korrekt.
   it("borde rendera formuläret korrekt", () => {
     render(<CreateAccountForm />);
     expect(screen.getByText("Kontouppgifter")).toBeInTheDocument();
@@ -81,6 +82,7 @@ describe("create-account-form", () => {
   });
 
   // --- TESTAR DYNAMISKA FÄLT I FORMULÄRET ---
+  // Verifierar att en kompetensrad kan läggas till och tas bort dynamiskt.
   it("borde hantera att lägga till och ta bort kompetens", async () => {
     render(<CreateAccountForm />);
 
@@ -112,6 +114,7 @@ describe("create-account-form", () => {
     });
   });
 
+  // Verifierar att en tillgänglighetsperiod kan läggas till och tas bort dynamiskt.
   it("borde hantera lägga till och ta bort tillgänliga perioder", async () => {
     render(<CreateAccountForm />);
 
@@ -141,6 +144,7 @@ describe("create-account-form", () => {
   });
 
   // --- TESTAR CLIENT SIDE VALIDATION ---
+  // Verifierar att mutate INTE anropas när formuläret skickas tomt (Zod-validering).
   it("borde visa client side validation errors", async () => {
     render(<CreateAccountForm />);
 
@@ -153,10 +157,11 @@ describe("create-account-form", () => {
   });
 
   // --- TEST FÖR SERVER FELHANTERING ---
+  // Verifierar att onError-callbacken hanterar Zod-fel, e-post-/pnr-dubbletter och okända serverfel.
   it("borde hantera server side errors korrekt", async () => {
     render(<CreateAccountForm />);
 
-    //Provocera fram onError för fel antal tecken på pw.
+    // Provocera fram onError för fel antal tecken på pw.
     // Först mocka ett tillräckligt formulär för att registrera callbacks efter submit.
     // Fyll i minimum data så vi passerar klientvalidering.
     fireEvent.change(screen.getByLabelText(/användarnamn/i), {
@@ -242,6 +247,7 @@ describe("create-account-form", () => {
   });
 
   // --- TEST FÖR ALLT RÄTT I REGI ---
+  // Verifierar att mutate anropas med korrekt data och att onSuccess navigerar till /applicants.
   it("should submit successfully", async () => {
     render(<CreateAccountForm />);
 
