@@ -48,6 +48,7 @@ interface CreateAccountFormProps {
   defaultSurname?: string;
 }
 
+/** Account registration form for applicant profile creation. */
 export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }: CreateAccountFormProps) {
   const router = useRouter();
   
@@ -446,7 +447,17 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
         </CardContent>
       </Card>
 
-      <CardFooter className="flex justify-end pt-6">
+      <CardFooter className="flex justify-end gap-4 pt-6">
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          className="w-full sm:w-auto"
+          disabled={createAccount.isPending}
+          onClick={() => router.push("/")}
+        >
+          Avbryt
+        </Button>
         <Button 
           type="submit" 
           size="lg" 

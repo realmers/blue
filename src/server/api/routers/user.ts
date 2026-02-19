@@ -4,6 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { createAccountSchema } from "@/lib/validation/account-schema";
 import { z } from "zod";
 
+/** Router containing account creation and applicant and updating date of availability */
 export const userRouter = createTRPCRouter({
   createAccount: publicProcedure
     .input(createAccountSchema)

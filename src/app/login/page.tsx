@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { loginUsernameSchema } from "@/lib/validation/account-schema";
 
+/** Login page supporting username/password and magic-link authentication. */
 export default function LoginPage() {
   const router = useRouter();
   

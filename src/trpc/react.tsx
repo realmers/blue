@@ -22,22 +22,22 @@ const getQueryClient = () => {
   return clientQueryClientSingleton;
 };
 
+/** Client-side tRPC React hooks API. */
 export const api = createTRPCReact<AppRouter>();
 
 /**
  * Inference helper for inputs.
- *
- * @example type HelloInput = RouterInputs['example']['hello']
+ * Example: type HelloInput = RouterInputs['example']['hello']
  */
 export type RouterInputs = inferRouterInputs<AppRouter>;
 
 /**
  * Inference helper for outputs.
- *
- * @example type HelloOutput = RouterOutputs['example']['hello']
+ * Example: type HelloOutput = RouterOutputs['example']['hello']
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
+/** Provider configuring tRPC and TanStack Query for client components. */
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
