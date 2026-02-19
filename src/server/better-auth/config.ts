@@ -36,7 +36,7 @@ export const auth = betterAuth({
   plugins: [
     username(),
     magicLink({
-      sendMagicLink: async ({ email, token, url }, request) => {
+      sendMagicLink: async ({ email, token: _token, url }, _request) => {
         // Restrict mails to only finnsinte.se
         const allowedDomains = ["finnsinte.se"];
 

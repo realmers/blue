@@ -1,8 +1,10 @@
 import { hash } from "argon2";
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import { createAccountSchema } from "@/lib/validation/account-schema";
+import { z } from "zod";
 
+/** Router containing account creation and applicant and updating date of availability */
 export const userRouter = createTRPCRouter({
   createAccount: publicProcedure
     .input(createAccountSchema)
@@ -128,4 +130,72 @@ export const userRouter = createTRPCRouter({
     });
     return competences;
   }),
+
+  /**
+   * Get the current logged-in user's availability periods.
+   */
+  getMyAvailability: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    const periods = await ctx.db.availability.findMany({
+      where: { person_id: typeof userId === "string" ? parseInt(userId) : userId },
+      orderBy: { from_date: "asc" },
+    });
+    return periods;
+  }),
+
+  /**
+   * Update the current logged-in user's availability periods.
+   * Replaces all existing periods with the provided ones (delete + create).
+   */
+  updateMyAvailability: protectedProcedure
+    .input(
+      z.object({
+        periods: z.array(
+          z.object({
+            fromDate: z.string().min(1, "Från-datum krävs"),
+            toDate: z.string().min(1, "Till-datum krävs"),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = typeof ctx.session.user.id === "string"
+        ? parseInt(ctx.session.user.id)
+        : ctx.session.user.id;
+
+      // Validate that fromDate < toDate for each period
+      for (const period of input.periods) {
+        if (new Date(period.fromDate) >= new Date(period.toDate)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Från-datum måste vara före till-datum",
+          });
+        }
+      }
+
+      await ctx.db.$transaction(async (tx) => {
+        // Delete all existing availability periods for this user
+        await tx.availability.deleteMany({
+          where: { person_id: userId },
+        });
+
+        // Create new ones
+        if (input.periods.length > 0) {
+          await tx.availability.createMany({
+            data: input.periods.map((p) => ({
+              person_id: userId,
+              from_date: new Date(p.fromDate),
+              to_date: new Date(p.toDate),
+            })),
+          });
+        }
+      });
+
+      ctx.logger.info(
+        { userId, periodsCount: input.periods.length },
+        "Availability periods updated",
+      );
+
+      return { success: true };
+    }),
 });

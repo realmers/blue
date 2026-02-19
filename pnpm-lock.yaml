@@ -71,6 +71,9 @@ importers:
       pino:
         specifier: ^10.3.0
         version: 10.3.0
+      pino-abstract-transport:
+        specifier: ^3.0.0
+        version: 3.0.0
       radix-ui:
         specifier: ^1.4.3
         version: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.9))(@types/react@19.2.9)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -174,6 +177,12 @@ importers:
       vitest:
         specifier: ^4.0.18
         version: 4.0.18(@types/node@25.0.10)(jiti@2.6.1)(jsdom@28.0.0(@noble/hashes@2.0.1))(lightningcss@1.30.2)(tsx@4.21.0)
+<<<<<<< HEAD
+=======
+      vitest-mock-extended:
+        specifier: ^3.1.0
+        version: 3.1.0(typescript@5.9.3)(vitest@4.0.18(@types/node@25.0.10)(jiti@2.6.1)(jsdom@28.0.0(@noble/hashes@2.0.1))(lightningcss@1.30.2)(tsx@4.21.0))
+>>>>>>> main
 
 packages:
 
@@ -4272,6 +4281,17 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
+<<<<<<< HEAD
+=======
+  ts-essentials@10.1.1:
+    resolution: {integrity: sha512-4aTB7KLHKmUvkjNj8V+EdnmuVTiECzn3K+zIbRthumvHu+j44x3w63xpfs0JL3NGIzGXqoQ7AV591xHO+XrOTw==}
+    peerDependencies:
+      typescript: '>=4.5.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+>>>>>>> main
   tsconfck@3.1.6:
     resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
     engines: {node: ^18 || >=20}
@@ -4429,6 +4449,15 @@ packages:
       yaml:
         optional: true
 
+<<<<<<< HEAD
+=======
+  vitest-mock-extended@3.1.0:
+    resolution: {integrity: sha512-vCM0VkuocOUBwwqwV7JB7YStw07pqeKvEIrZnR8l3PtwYi6rAAJAyJACeC1UYNfbQWi85nz7EdiXWBFI5hll2g==}
+    peerDependencies:
+      typescript: 3.x || 4.x || 5.x
+      vitest: '>=3.0.0'
+
+>>>>>>> main
   vitest@4.0.18:
     resolution: {integrity: sha512-hOQuK7h0FGKgBAas7v0mSAsnvrIgAvWmRFjmzpJ7SwFHH3g1k2u37JtYwOwmEKhK6ZO3v9ggDBBm0La1LCK4uQ==}
     engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
@@ -8723,6 +8752,10 @@ snapshots:
     dependencies:
       typescript: 5.9.3
 
+  ts-essentials@10.1.1(typescript@5.9.3):
+    optionalDependencies:
+      typescript: 5.9.3
+
   tsconfck@3.1.6(typescript@5.9.3):
     optionalDependencies:
       typescript: 5.9.3
@@ -8888,6 +8921,15 @@ snapshots:
       lightningcss: 1.30.2
       tsx: 4.21.0
 
+<<<<<<< HEAD
+=======
+  vitest-mock-extended@3.1.0(typescript@5.9.3)(vitest@4.0.18(@types/node@25.0.10)(jiti@2.6.1)(jsdom@28.0.0(@noble/hashes@2.0.1))(lightningcss@1.30.2)(tsx@4.21.0)):
+    dependencies:
+      ts-essentials: 10.1.1(typescript@5.9.3)
+      typescript: 5.9.3
+      vitest: 4.0.18(@types/node@25.0.10)(jiti@2.6.1)(jsdom@28.0.0(@noble/hashes@2.0.1))(lightningcss@1.30.2)(tsx@4.21.0)
+
+>>>>>>> main
   vitest@4.0.18(@types/node@25.0.10)(jiti@2.6.1)(jsdom@28.0.0(@noble/hashes@2.0.1))(lightningcss@1.30.2)(tsx@4.21.0):
     dependencies:
       '@vitest/expect': 4.0.18

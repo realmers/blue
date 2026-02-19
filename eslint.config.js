@@ -11,6 +11,9 @@ export default tseslint.config(
       "src/app/create-account/create-account-form.test.tsx",
       "src/app/login/page.test.tsx",
       "src/lib/validation/account-schema.test.ts",
+      "vitest.setup.ts",
+      "src/server/api/routers/user.test.ts",
+      "src/server/api/routers/application.test.ts",
     ],
   },
 

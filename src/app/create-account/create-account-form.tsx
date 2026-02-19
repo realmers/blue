@@ -15,6 +15,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { CalendarIcon, UserIcon, BriefcaseIcon, LockIcon, Trash2Icon, Loader2Icon } from "lucide-react";
+import { authClient } from "@/server/better-auth/client";
 
 function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
@@ -47,6 +48,7 @@ interface CreateAccountFormProps {
   defaultSurname?: string;
 }
 
+/** Account registration form for applicant profile creation. */
 export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }: CreateAccountFormProps) {
   const router = useRouter();
   
@@ -71,8 +73,10 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
   const { data: competences, isLoading: isLoadingCompetences } = api.user.getCompetences.useQuery();
 
   const createAccount = api.user.createAccount.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await authClient.signIn.username({ username, password });
       router.push("/applicants");
+
     },
     onError: (err) => {
       // Check if it's a Zod validation error (fallback just in case)
@@ -443,7 +447,17 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
         </CardContent>
       </Card>
 
-      <CardFooter className="flex justify-end pt-6">
+      <CardFooter className="flex justify-end gap-4 pt-6">
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          className="w-full sm:w-auto"
+          disabled={createAccount.isPending}
+          onClick={() => router.push("/")}
+        >
+          Avbryt
+        </Button>
         <Button 
           type="submit" 
           size="lg" 

@@ -2,8 +2,7 @@ import { z } from "zod";
 
 /**
  * Schema for validating a competence profile entry.
- * @property competenceId - The ID of the competence from the database
- * @property yearsOfExperience - Years of experience (0-99.99)
+ * Includes competence ID and years of experience.
  */
 export const competenceProfileSchema = z.object({
   competenceId: z.number(),
@@ -12,8 +11,7 @@ export const competenceProfileSchema = z.object({
 
 /**
  * Schema for validating an availability period.
- * @property fromDate - Start date as ISO string
- * @property toDate - End date as ISO string
+ * Includes start and end dates as ISO strings.
  */
 export const availabilitySchema = z.object({
   fromDate: z.string(),
@@ -23,14 +21,8 @@ export const availabilitySchema = z.object({
 /**
  * Schema for validating account creation input.
  * Used by both client-side and server-side validation.
- * @property username - Username (3-50 characters)
- * @property password - Password (8-64 characters)
- * @property email - Valid email address
- * @property name - First name (required, max 255 characters)
- * @property surname - Last name (required, max 255 characters)
- * @property pnr - Swedish personal number (exactly 12 digits)
- * @property competenceProfiles - Optional array of competence profiles
- * @property availabilityPeriods - Optional array of availability periods
+ * Requires username, password, email, name, surname, and personal number,
+ * with optional competence profiles and availability periods.
  */
 export const createAccountSchema = z.object({
   username: z
@@ -59,11 +51,13 @@ export const createAccountSchema = z.object({
   availabilityPeriods: z.array(availabilitySchema).optional(),
 });
 
+/** Schema for validating login with username and password. */
 export const loginUsernameSchema = z.object({
   username: z.string().min(3, "Felaktigt användarnamn eller lösenord").max(50, "Felaktigt användarnamn eller lösenord"),
   password: z.string().min(8, "Felaktigt användarnamn eller lösenord").max(64, "Felaktigt användarnamn eller lösenord"),
 });
 
+/** Schema for validating login with magic link email. */
 export const loginMagicLinkSchema = z.object({
   email: z.email(),
 });
