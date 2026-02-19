@@ -12,7 +12,7 @@ export const competenceProfileSchema = z.object({
 
 /**
  * Schema for validating an availability period.
- * @property fromDate - Start date as ISO stringkräver
+ * @property fromDate - Start date as ISO string
  * @property toDate - End date as ISO string
  */
 export const availabilitySchema = z.object({

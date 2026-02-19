@@ -40,6 +40,7 @@ describe("Page: Login", () => {
     vi.clearAllMocks();
   });
 
+  // Verifierar att inloggningssidan renderar rubrik, användarnamn- och lösenordsfält.
   it("borde rendera login korrekt", () => {
     render(<LoginPage />);
     // Kollar att rubriker och fält finns på plats.
@@ -50,6 +51,7 @@ describe("Page: Login", () => {
     expect(screen.getByLabelText(/lösenord/i)).toBeInTheDocument();
   });
 
+  // Verifierar att signIn.username anropas med rätt data och att vi navigeras till "/" vid lyckad inloggning.
   it("borde calla signIn.username när ett formulär är submittad", async () => {
     // Mocka att inloggningen lyckas.
     vi.mocked(authClient.signIn.username).mockResolvedValue({
@@ -83,6 +85,7 @@ describe("Page: Login", () => {
     expect(pushMock).toHaveBeenCalledWith("/");
   });
 
+  // Verifierar att serverns felmeddelande visas i UI:t vid misslyckad inloggning.
   it("borde visa error meddelande om login misslyckas", async () => {
     // Mocka att inloggningen misslyckas.
     vi.mocked(authClient.signIn.username).mockResolvedValue({
@@ -110,6 +113,7 @@ describe("Page: Login", () => {
     });
   });
 
+  // Verifierar att signIn.magicLink anropas med rätt e-post och att "Länk skickad!" visas.
   it("borde calla signIn.magicLink när email är sibmittad", async () => {
     // Mocka att magic länk anropet lyckas.
     vi.mocked(authClient.signIn.magicLink).mockResolvedValue({
@@ -141,6 +145,7 @@ describe("Page: Login", () => {
     expect(screen.getByText(/länk skickad!/i)).toBeInTheDocument();
   });
 
+  // Verifierar att serverns felmeddelande visas om magic link-anropet returnerar error.
   it("borde visa fel meddelande om magic link misslyckas", async () => {
     // Simulera att servern svarar med fel på magic link.
     vi.mocked(authClient.signIn.magicLink).mockResolvedValue({
@@ -163,6 +168,7 @@ describe("Page: Login", () => {
     });
   });
 
+  // Verifierar att "Försök igen"-knappen återställer formuläret efter att länken skickats.
   it("borde försöaka med med magic link igen (reset form)", async () => {
     // 1. Skicka länken först (Success).
     vi.mocked(authClient.signIn.magicLink).mockResolvedValue({
@@ -191,6 +197,7 @@ describe("Page: Login", () => {
     expect(screen.queryByText(/länk skickad!/i)).not.toBeInTheDocument();
   });
 
+  // Verifierar att ett nätverksfel (kastat Error) fångas och visas som felmeddelande.
   it("borde hantera oförväntade errors för användarnamn login", async () => {
     // Simulera att funktionen kraschar helt (kastar Error).
     vi.mocked(authClient.signIn.username).mockRejectedValue(
@@ -212,6 +219,7 @@ describe("Page: Login", () => {
     });
   });
 
+  // Verifierar att felmeddelandet från Error-objektet visas vid reject.
   it("borde hantera okända fel för användarnamn login", async () => {
     vi.mocked(authClient.signIn.username).mockRejectedValue(
       new Error("Nätverksfel"),

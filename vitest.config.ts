@@ -16,7 +16,19 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./vitest.setup.ts"],
     coverage: {
-      exclude: ["src/components/ui"],
+      exclude: [
+        "src/components/ui/badge.tsx",
+        "src/components/ui/button.tsx",
+        "src/components/ui/card.tsx",
+        "src/components/ui/field.tsx",
+        "src/components/ui/footer.tsx",
+        "src/components/ui/input.tsx",
+        "src/components/ui/label.tsx",
+        "src/components/ui/navigation-menu.tsx",
+        "src/components/ui/select.tsx",
+        "src/components/ui/separator.tsx",
+        "src/components/ui/table.tsx",
+      ],
     },
   },
 });
