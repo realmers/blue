@@ -25,6 +25,15 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
+// Mocka authClient
+vi.mock("@/server/better-auth/client", () => ({
+  authClient: {
+    signIn: {
+      username: vi.fn().mockResolvedValue({}), // Pretend login succeeded immediately
+    },
+  },
+}));
+
 // Mocka TRPC
 // Behöver komma åt onError/onSuccess som komponenten skickar till useMutation.
 const useMutationMock = vi.fn();
@@ -285,7 +294,7 @@ describe("create-account-form", () => {
       throw new Error("Mutation options hittades inte");
     }
 
-    mutationOptions.onSuccess();
+    await mutationOptions.onSuccess();
     expect(pushMock).toHaveBeenCalledWith("/applicants");
   });
 });
