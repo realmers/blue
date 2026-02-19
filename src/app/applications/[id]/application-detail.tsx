@@ -41,6 +41,7 @@ const statusVariant: Record<
 
 type ApplicationStatus = "unhandled" | "accepted" | "rejected";
 
+/** Detailed recruiter view for one application including status updates. */
 export function ApplicationDetail() {
   const params = useParams();
   const router = useRouter();

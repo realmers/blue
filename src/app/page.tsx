@@ -11,6 +11,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
+/** Home page for both applicants and recruiters. */
 export default async function Home() {
   const session = await getSession();
 

@@ -19,6 +19,7 @@ interface AvailabilityPeriod {
   toDate: string;
 }
 
+/** Modal for viewing and updating the signed-in applicant's availability periods. */
 export function AvailabilityModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [periods, setPeriods] = useState<AvailabilityPeriod[]>([]);
