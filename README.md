@@ -32,6 +32,7 @@ The project is built on the T3 Stack and deployed on Vercel with a PostgreSQL da
 |----------------------|----------------------------------------------------------|
 | `DATABASE_URL`       | PostgreSQL connection string from Supabase               |
 | `BETTER_AUTH_SECRET` | Secret key for Better Auth session signing               |
+| `BETTER_AUTH_URL`    | Base URL used by Better Auth for redirects/callbacks     |
 | `NODE_ENV`           | `development`, `test`, or `production`                   |
 | `LOG_LEVEL`          | Log verbosity: `trace`, `debug`, `info`, `warn`, `error` |
 
