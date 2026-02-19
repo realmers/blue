@@ -2,6 +2,7 @@ import { createTRPCRouter, recruiterProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+/** Router containing recruiter-facing application management procedures. */
 export const applicationRouter = createTRPCRouter({
     /**
      * List all applications

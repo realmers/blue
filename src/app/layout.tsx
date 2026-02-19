@@ -7,6 +7,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { Header } from "@/components/ui/header";
 import { Footer } from "@/components/ui/footer";
 
+/** Root metadata for the application shell. */
 export const metadata: Metadata = {
   title: "Blue App",
   description: "blue app",
@@ -18,6 +19,7 @@ const geist = Geist({
   variable: "--font-geist-sans",
 });
 
+/** Root layout wrapping all pages with global providers and chrome. */
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

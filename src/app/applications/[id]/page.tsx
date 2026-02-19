@@ -3,6 +3,7 @@ import { getSession } from "@/server/better-auth/server";
 import { db } from "@/server/db";
 import { ApplicationDetail } from "./application-detail";
 
+/** Recruiter-only detail page wrapper for a single application. */
 export default async function ApplicationPage() {
   const session = await getSession();
 

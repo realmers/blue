@@ -24,8 +24,7 @@ import { logger } from "@/lib/logger";
  *
  * This helper generates the "internals" for a tRPC context. The API handler and RSC clients each
  * wrap this and provides the required context.
- *
- * @see https://trpc.io/docs/server/context
+ * Reference: https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth.api.getSession({
@@ -83,8 +82,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 
 /**
  * Create a server-side caller.
- *
- * @see https://trpc.io/docs/server/server-side-calls
+ * Reference: https://trpc.io/docs/server/server-side-calls
  */
 export const createCallerFactory = t.createCallerFactory;
 
@@ -97,8 +95,7 @@ export const createCallerFactory = t.createCallerFactory;
 
 /**
  * This is how you create new routers and sub-routers in your tRPC API.
- *
- * @see https://trpc.io/docs/router
+ * Reference: https://trpc.io/docs/router
  */
 export const createTRPCRouter = t.router;
 
@@ -148,8 +145,7 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  *
  * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
  * the session is valid and guarantees `ctx.session.user` is not null.
- *
- * @see https://trpc.io/docs/procedures
+ * Reference: https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)

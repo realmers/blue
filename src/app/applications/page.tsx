@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { ApplicationsTable } from "./applications-table";
 
+/** Recruiter page listing all submitted applications. */
 export default async function ApplicationsPage() {
   const session = await getSession();
 

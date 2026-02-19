@@ -27,6 +27,7 @@ const statusVariant: Record<
   rejected: "destructive",
 };
 
+/** Table view of all applications for recruiter review. */
 export function ApplicationsTable() {
   const router = useRouter();
   const {
