@@ -7,7 +7,7 @@ import type { db } from "@/server/db";
 import { hash } from "argon2";
 
 // ----------------------------------------------------------------
-// MOCKS
+// Mocks – argon2
 // ----------------------------------------------------------------
 
 vi.mock("argon2", () => ({
@@ -16,6 +16,10 @@ vi.mock("argon2", () => ({
 
 type PrismaClientType = typeof db;
 
+/**
+ * Creates a tRPC caller with mocked DB, logger, and an optional session.
+ * Passing `null` for sessionUser simulates an unauthenticated request.
+ */
 const createCaller = (
     dbMock: DeepMockProxy<PrismaClientType>,
     loggerMock: DeepMockProxy<Logger>,
@@ -48,11 +52,12 @@ describe("User Router", () => {
         dbMock = mockDeep<PrismaClientType>();
         loggerMock = mockDeep<Logger>();
 
+        // Make $transaction pass the mock client directly to the callback
         dbMock.$transaction.mockImplementation(async (callback: any) => callback(dbMock));
     });
 
     // ----------------------------------------------------------------
-    // CREATE ACCOUNT
+    // createAccount – public endpoint for new user registration
     // ----------------------------------------------------------------
 
     describe("createAccount", () => {
@@ -67,6 +72,7 @@ describe("User Router", () => {
             availabilityPeriods: [{ fromDate: "2024-01-01", toDate: "2024-01-31" }],
         };
 
+        // Duplicate username must be rejected
         it("should throw CONFLICT if username exists", async () => {
             dbMock.user.findUnique.mockResolvedValueOnce({ id: 1 } as any);
             const caller = createCaller(dbMock, loggerMock);
@@ -81,7 +87,9 @@ describe("User Router", () => {
             expect(loggerMock.warn).toHaveBeenCalled();
         });
 
+        // Duplicate email must be rejected
         it("should throw CONFLICT if email exists", async () => {
+            // First findUnique (username) returns null, second (email) returns a match
             dbMock.user.findUnique.mockResolvedValueOnce(null).mockResolvedValueOnce({ id: 1 } as any);
             const caller = createCaller(dbMock, loggerMock);
 
@@ -94,6 +102,7 @@ describe("User Router", () => {
             }
         });
 
+        // Duplicate personnummer must be rejected
         it("should throw CONFLICT if pnr exists", async () => {
             dbMock.user.findUnique.mockResolvedValue(null);
             dbMock.user.findFirst.mockResolvedValue({ id: 1 } as any);
@@ -108,6 +117,7 @@ describe("User Router", () => {
             }
         });
 
+        // Happy path: user, account, competence profiles, and availability are created
         it("should create account successfully (happy path)", async () => {
             dbMock.user.findUnique.mockResolvedValue(null);
             dbMock.user.findFirst.mockResolvedValue(null);
@@ -128,6 +138,23 @@ describe("User Router", () => {
             );
         });
 
+        // Ensures optional arrays can be omitted without errors
+        it("should create account without optional competences and availability", async () => {
+            dbMock.user.findUnique.mockResolvedValue(null);
+            dbMock.user.findFirst.mockResolvedValue(null);
+            dbMock.role.findFirst.mockResolvedValue({ role_id: 2, name: "applicant" } as any);
+            dbMock.user.create.mockResolvedValue({ id: 101 } as any);
+
+            const caller = createCaller(dbMock, loggerMock);
+            const { competenceProfiles, availabilityPeriods, ...minimalInput } = validInput;
+            const result = await caller.user.createAccount(minimalInput);
+
+            expect(result.success).toBe(true);
+            expect(dbMock.competence_profile.createMany).not.toHaveBeenCalled();
+            expect(dbMock.availability.createMany).not.toHaveBeenCalled();
+        });
+
+        // Unexpected DB errors are wrapped in a generic INTERNAL_SERVER_ERROR
         it("should throw INTERNAL_SERVER_ERROR on unexpected error", async () => {
             dbMock.user.findUnique.mockResolvedValue(null);
             dbMock.user.findFirst.mockResolvedValue(null);
@@ -147,15 +174,55 @@ describe("User Router", () => {
     });
 
     // ----------------------------------------------------------------
-    // AVAILABILITY
+    // getMyAvailability – returns the logged-in user's periods
+    // ----------------------------------------------------------------
+
+    describe("getMyAvailability", () => {
+        // Ensures unauthenticated access is blocked
+        it("should reject unauthenticated user", async () => {
+            const caller = createCaller(dbMock, loggerMock, null);
+            await expect(caller.user.getMyAvailability()).rejects.toBeInstanceOf(TRPCError);
+        });
+
+        // Happy path: returns availability periods for the current user
+        it("should return availability periods for logged-in user", async () => {
+            const caller = createCaller(dbMock, loggerMock, { id: "5", role: "applicant" });
+            const mockPeriods = [
+                { availability_id: 1, person_id: 5, from_date: new Date("2024-01-01"), to_date: new Date("2024-01-31") },
+                { availability_id: 2, person_id: 5, from_date: new Date("2024-03-01"), to_date: new Date("2024-03-31") },
+            ];
+            dbMock.availability.findMany.mockResolvedValue(mockPeriods as any);
+
+            const result = await caller.user.getMyAvailability();
+
+            expect(result).toHaveLength(2);
+            expect(dbMock.availability.findMany).toHaveBeenCalledWith(
+                expect.objectContaining({ where: { person_id: 5 } })
+            );
+        });
+
+        // Edge case: user has no availability periods yet
+        it("should return empty array when user has no periods", async () => {
+            const caller = createCaller(dbMock, loggerMock, { id: 7, role: "applicant" });
+            dbMock.availability.findMany.mockResolvedValue([]);
+
+            const result = await caller.user.getMyAvailability();
+            expect(result).toEqual([]);
+        });
+    });
+
+    // ----------------------------------------------------------------
+    // updateMyAvailability – replaces all periods for the current user
     // ----------------------------------------------------------------
 
     describe("updateMyAvailability", () => {
+        // Ensures unauthenticated access is blocked
         it("should reject unauthenticated user", async () => {
             const caller = createCaller(dbMock, loggerMock, null);
             await expect(caller.user.updateMyAvailability({ periods: [] })).rejects.toBeInstanceOf(TRPCError);
         });
 
+        // fromDate must be before toDate, otherwise BAD_REQUEST
         it("should validate date order", async () => {
             const caller = createCaller(dbMock, loggerMock, { id: 1, role: "applicant" });
 
@@ -169,6 +236,7 @@ describe("User Router", () => {
             }
         });
 
+        // Happy path: old periods are deleted and new ones created in a transaction
         it("should replace availability periods", async () => {
             const caller = createCaller(dbMock, loggerMock, { id: "10", role: "applicant" });
 
@@ -180,13 +248,25 @@ describe("User Router", () => {
             expect(dbMock.availability.createMany).toHaveBeenCalled();
             expect(result.success).toBe(true);
         });
+
+        // Sending an empty array clears all periods
+        it("should clear all periods when given empty array", async () => {
+            const caller = createCaller(dbMock, loggerMock, { id: 3, role: "applicant" });
+
+            const result = await caller.user.updateMyAvailability({ periods: [] });
+
+            expect(dbMock.availability.deleteMany).toHaveBeenCalledWith({ where: { person_id: 3 } });
+            expect(dbMock.availability.createMany).not.toHaveBeenCalled();
+            expect(result.success).toBe(true);
+        });
     });
 
     // ----------------------------------------------------------------
-    // GET COMPETENCES
+    // getCompetences – public list of available competence areas
     // ----------------------------------------------------------------
 
     describe("getCompetences", () => {
+        // Happy path: returns competences 
         it("should return competences sorted by name", async () => {
             dbMock.competence.findMany.mockResolvedValue([{ id: 1, name: "Backend" }, { id: 2, name: "Frontend" }] as any);
 
@@ -195,6 +275,16 @@ describe("User Router", () => {
 
             expect(dbMock.competence.findMany).toHaveBeenCalledWith({ orderBy: { name: "asc" } });
             expect(result.length).toBe(2);
+        });
+
+        // Edge case: no competences exist in the DB
+        it("should return empty array when no competences exist", async () => {
+            dbMock.competence.findMany.mockResolvedValue([]);
+
+            const caller = createCaller(dbMock, loggerMock);
+            const result = await caller.user.getCompetences();
+
+            expect(result).toEqual([]);
         });
     });
 });
