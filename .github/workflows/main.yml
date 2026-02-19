@@ -16,6 +16,7 @@ jobs:
     env:
       DATABASE_URL: "postgresql://postgres:postgres@localhost:5432"
       BETTER_AUTH_SECRET: "this_is_a_very_long_test_secret_123456789"
+      BETTER_AUTH_URL: "http://localhost:3000"
 
     steps:
       - name: Checkout Repository
