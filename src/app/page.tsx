@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardContent,
   CardFooter,
 } from "@/components/ui/card";
 
@@ -35,18 +34,26 @@ export default async function Home() {
               <CardHeader>
                 <CardTitle className="text-xl">Sökande</CardTitle>
                 <CardDescription>
-                  Letar du efter ett jobb? Registrera din profil, ange din tillgänglighet och ansök idag.
+                  {session
+                    ? "Se din ansökan och hantera dina tillgänglighetsperioder."
+                    : "Letar du efter ett jobb? Registrera din profil, ange din tillgänglighet och ansök idag."}
                 </CardDescription>
               </CardHeader>
-              {!session && (
-                <CardFooter>
+              <CardFooter>
+                {session ? (
+                  <Button asChild className="w-full sm:w-auto">
+                    <Link href="/applicants">
+                      Min ansökan →
+                    </Link>
+                  </Button>
+                ) : (
                   <Button asChild className="w-full sm:w-auto">
                     <Link href="/create-account">
                       Skapa konto →
                     </Link>
                   </Button>
-                </CardFooter>
-              )}
+                )}
+              </CardFooter>
             </Card>
 
             {/* Recruiters Card */}
@@ -54,18 +61,26 @@ export default async function Home() {
               <CardHeader>
                 <CardTitle className="text-xl">Rekryterare</CardTitle>
                 <CardDescription>
-                  Logga in för att hantera ansökningar, granska kandidater och välja personal.
+                  {session
+                    ? "Granska och hantera ansökningar."
+                    : "Logga in för att hantera ansökningar, granska kandidater och välja personal."}
                 </CardDescription>
               </CardHeader>
-              {!session && (
-                <CardFooter>
+              <CardFooter>
+                {session ? (
+                  <Button asChild className="w-full sm:w-auto bg-black text-white hover:bg-slate-800">
+                    <Link href="/applications">
+                      Hantera ansökningar →
+                    </Link>
+                  </Button>
+                ) : (
                   <Button asChild className="w-full sm:w-auto bg-black text-white hover:bg-slate-800">
                     <Link href="/login">
                       Logga in som rekryterare
                     </Link>
                   </Button>
-                </CardFooter>
-              )}
+                )}
+              </CardFooter>
             </Card>
           </div>
 
