@@ -102,7 +102,3 @@ Restore the dump into the local database.
 ```bash
 pg_restore -U postgres -d blue -h localhost -p 5433 --clean --if-exists prisma/bluelund.sql
 ```
-
-**Using Docker directly (no local PostgreSQL tools required):**
-
-> The container name (`blue-postgres`) is the default assigned by Docker Compose. Run `docker ps` to confirm the exact name if the command fails.
