@@ -2,6 +2,7 @@ import { getSession } from "@/server/better-auth/server";
 import { HydrateClient } from "@/trpc/server";
 import { CreateAccountForm } from "./create-account-form";
 
+/** Create-account page that pre-fills fields from an existing session when available. */
 export default async function CreateAccountPage() {
   const session = await getSession();
 
