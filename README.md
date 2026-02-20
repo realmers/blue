@@ -7,7 +7,7 @@ IV1201 project
 Blå Lund Recruitment App is a school project in the course "Arkitektur och design av globala applikationer" at KTH.
 The system distinguishes between two types of users: applicants and recruiters. An applicant applies for a position within the company while a recruiter manages applications. The system covers two main areas: the registration of job applications and the administration of applications.
 
-The project is built on the T3 Stack and deployed on Vercel with a PostgreSQL database hosted on Supabase.
+The project is built on Next.js and tRPC and deployed on Vercel with a PostgreSQL database hosted on Supabase.
 
 ## How to run
 
@@ -89,3 +89,20 @@ This starts a PostgreSQL container on port `5433`. Set `DATABASE_URL` to:
 ```
 postgresql://postgres:test@localhost:5433/blue
 ```
+
+### Pre-seeded database (`prisma/bluelund.sql`)
+
+`prisma/bluelund.sql` is a PostgreSQL dump of the development database with the full migrated dataset (roles, competences, users, availability, and competence profiles already populated).
+
+**Prerequisites:** The local Docker container must be running (`docker compose up -d`).
+
+Restore the dump into the local database.
+
+**Using `pg_restore` (if installed locally):**
+```bash
+pg_restore -U postgres -d blue -h localhost -p 5433 --clean --if-exists prisma/bluelund.sql
+```
+
+**Using Docker directly (no local PostgreSQL tools required):**
+
+> The container name (`blue-postgres`) is the default assigned by Docker Compose. Run `docker ps` to confirm the exact name if the command fails.
