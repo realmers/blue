@@ -57,7 +57,7 @@ The application is deployed on [Vercel](https://vercel.com). Push to the main br
 
 ### Front-end to Back-end stack
 
-This is a [T3 Stack](https://create.t3.gg) project. If you are not familiar with the technologies used, please refer to the respective docs.
+If you are not familiar with the technologies used, please refer to the respective docs.
 
 - [Next.js](https://nextjs.org)
 - [tRPC](https://trpc.io)
