@@ -8,7 +8,6 @@
  * - Rendering av data med kompetenser, tillgänglighet och status.
  * - Navigering vid radklick.
  *
- * Presentation Layer test.
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -217,6 +216,88 @@ describe("ApplicationsTable", () => {
     fireEvent.click(row!);
 
     expect(pushMock).toHaveBeenCalledWith("/applications/42");
+  });
+
+  // Verifierar att "Okänd" visas som fallback när kompetensens namn saknas.
+  it("borde visa 'Okänd' när kompetensnamn saknas", () => {
+    useQueryMock.mockReturnValue({
+      data: [
+        {
+          id: 1,
+          name: "Test",
+          surname: "User",
+          email: "test@test.com",
+          application_status: "unhandled",
+          createdAt: "2024-01-01T00:00:00Z",
+          competence_profile: [
+            {
+              competence_profile_id: 10,
+              years_of_experience: 2,
+              competence: null,
+            },
+          ],
+          availability: [],
+        },
+      ],
+      isLoading: false,
+      error: null,
+    });
+
+    render(<ApplicationsTable />);
+    expect(screen.getByText("Okänd")).toBeInTheDocument();
+  });
+
+  // Verifierar att "?" visas som fallback när tillgänglighetsdatum saknas.
+  it("borde visa '?' när from_date eller to_date saknas", () => {
+    useQueryMock.mockReturnValue({
+      data: [
+        {
+          id: 1,
+          name: "Test",
+          surname: "User",
+          email: "test@test.com",
+          application_status: "unhandled",
+          createdAt: "2024-01-01T00:00:00Z",
+          competence_profile: [],
+          availability: [
+            {
+              availability_id: 20,
+              from_date: null,
+              to_date: null,
+            },
+          ],
+        },
+      ],
+      isLoading: false,
+      error: null,
+    });
+
+    render(<ApplicationsTable />);
+    // Datumen visas som "? – ?" i ett element
+    expect(screen.getByText(/\? – \?/)).toBeInTheDocument();
+  });
+
+  // Verifierar att en okänd status visas med sitt råvärde och outline-variant.
+  it("borde visa okänd status med råvärde som fallback", () => {
+    useQueryMock.mockReturnValue({
+      data: [
+        {
+          id: 1,
+          name: "Test",
+          surname: "User",
+          email: "test@test.com",
+          application_status: "unknown_status",
+          createdAt: "2024-01-01T00:00:00Z",
+          competence_profile: [],
+          availability: [],
+        },
+      ],
+      isLoading: false,
+      error: null,
+    });
+
+    render(<ApplicationsTable />);
+    expect(screen.getByText("unknown_status")).toBeInTheDocument();
   });
 
   // Verifierar att tabellen renderar flera rader korrekt.

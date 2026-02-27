@@ -8,7 +8,6 @@
  * - Serverfelhantering (fångar upp onError callbacks).
  * - Lyckad registrering.
  *
- * Integration layer test.
  */
 
 import { act } from "react";
@@ -244,6 +243,38 @@ describe("create-account-form", () => {
       onError({ message: "Boom!" });
     });
     expect(screen.getByText(/Ett oväntat fel uppstod/i)).toBeInTheDocument();
+
+    // --- TEST FALL 5: Användarnamn fel via message (inte Zod) ---
+    act(() => {
+      onError({ message: "Användarnamn är redan taget" });
+    });
+    expect(screen.getByText(/Användarnamn är redan taget/i)).toBeInTheDocument();
+
+    // --- TEST FALL 6: "Ett fel uppstod" meddelande från servern ---
+    act(() => {
+      onError({ message: "Ett fel uppstod, vänligen försök igen" });
+    });
+    expect(screen.getByText(/Ett fel uppstod, vänligen försök igen/i)).toBeInTheDocument();
+
+    // --- TEST FALL 7: "Försök igen" meddelande från servern ---
+    act(() => {
+      onError({ message: "Försök igen senare" });
+    });
+    expect(screen.getByText(/Försök igen senare/i)).toBeInTheDocument();
+
+    // --- TEST FALL 8: Zod error med tomt messages-array ---
+    act(() => {
+      onError({
+        data: {
+          zodError: {
+            fieldErrors: {
+              username: [],
+            },
+          },
+        },
+      });
+    });
+    // Inga nya fältfel ska visas för tomt array (inga felmeddelanden att läsa)
   });
 
   // --- TEST FÖR ALLT RÄTT I REGI ---
@@ -302,5 +333,26 @@ describe("create-account-form", () => {
 
     await mutationOptions.onSuccess();
     expect(pushMock).toHaveBeenCalledWith("/applicants");
+  });
+
+  // Verifierar att "Registrerar..." visas och knappen är disabled under isPending.
+  it("borde visa 'Registrerar...' när mutation är pending", () => {
+    // Ändra useMutation mocken så att isPending = true
+    vi.mocked(api.user.createAccount.useMutation).mockImplementation(
+      (options: any) => {
+        useMutationMock(options);
+        return {
+          mutate: mutateMock,
+          isPending: true,
+        } as any;
+      },
+    );
+
+    render(<CreateAccountForm />);
+
+    expect(screen.getByText("Registrerar...")).toBeInTheDocument();
+    // Knappen ska vara disabled
+    const submitBtn = screen.getByRole("button", { name: /registrerar/i });
+    expect(submitBtn).toBeDisabled();
   });
 });

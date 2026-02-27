@@ -7,7 +7,6 @@
  * - Inloggat tillstånd (visar "Logga ut"-knapp).
  * - Utloggningsflöde (anropar signOut och navigerar).
  *
- * Presentation Layer test.
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

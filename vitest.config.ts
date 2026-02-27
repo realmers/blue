@@ -1,7 +1,9 @@
 /**
+ * 
  * Huvudkonfiguration för Vitest.
  * Ställer in testmiljön (jsdom), aktiverar React-plugin,
  * hanterar TypeScript-sökvägar (@/...) och pekar ut setup-filen.
+ * 
  */
 
 import { defineConfig } from "vitest/config";
