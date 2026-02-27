@@ -9,7 +9,6 @@
  * - Conflict-felhantering (optimistisk samtidighetskontroll).
  * - Tillbaka-knapp navigering.
  *
- * Integration Layer test.
  */
 
 import { act } from "react";

@@ -1,7 +1,9 @@
 /**
+ * 
  * Global setup-fil för testmiljön.
  * Importerar jest-dom matchers (t.ex. toBeInTheDocument) så de finns tillgängliga i alla tester,
  * och hanterar automatisk städning (cleanup) efter varje test.
+ * 
  */
 
 import '@testing-library/jest-dom/vitest';

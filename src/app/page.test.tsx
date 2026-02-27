@@ -5,7 +5,6 @@
  * - Rendering av rubrik och kort utan session (utloggat läge).
  * - Rendering av välkomstmeddelande och navigeringslänkar med session (inloggat läge).
  *
- * Presentation Layer test.
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

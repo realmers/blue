@@ -6,7 +6,6 @@
  * - Omdirigering till / om användaren inte har rollen "applicant".
  * - Korrekt rendering när användaren har rätt roll.
  *
- * Presentation Layer test.
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

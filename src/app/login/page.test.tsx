@@ -7,7 +7,6 @@
  * - Testar "Magic Link"-flödet.
  * - Verifierar att felmeddelanden visas för användaren.
  *
- * Integration Layer test.
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

@@ -10,8 +10,7 @@
  * - Lyckad uppdatering (visar success-meddelande).
  * - Felhantering från servern.
  * - Tomma perioder filtreras bort vid sparande.
- *
- * Integration Layer test.
+ * 
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

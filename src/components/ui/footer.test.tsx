@@ -7,7 +7,6 @@
  * - Navigeringslänkar för support & juridik.
  * - Copyright-text.
  *
- * Presentation Layer test.
  */
 
 import { describe, it, expect } from "vitest";

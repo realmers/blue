@@ -8,7 +8,6 @@
  * - Rendering av data med kompetenser, tillgänglighet och status.
  * - Navigering vid radklick.
  *
- * Presentation Layer test.
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

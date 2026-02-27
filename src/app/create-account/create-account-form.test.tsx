@@ -8,7 +8,6 @@
  * - Serverfelhantering (fångar upp onError callbacks).
  * - Lyckad registrering.
  *
- * Integration layer test.
  */
 
 import { act } from "react";

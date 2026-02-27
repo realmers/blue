@@ -5,7 +5,6 @@
  * - Rendering av rubrik och formulär utan session.
  * - Förfyllda standardvärden från en befintlig session.
  *
- * Presentation Layer test.
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";

@@ -8,7 +8,6 @@
  * - Konflikthantering via tailwind-merge.
  * - Tomt anrop.
  *
- * Utility Layer test.
  */
 
 import { describe, it, expect } from "vitest";
