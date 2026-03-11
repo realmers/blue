@@ -7,30 +7,35 @@ import { Dialog as DialogPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
+/** Renders the root dialog container. */
 function Dialog({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
 }
 
+/** Renders the trigger element that opens the dialog. */
 function DialogTrigger({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
 }
 
+/** Renders a portal for dialog content. */
 function DialogPortal({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
 }
 
+/** Renders the close control for the dialog. */
 function DialogClose({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
+/** Renders the backdrop overlay behind the dialog. */
 function DialogOverlay({
   className,
   ...props
@@ -47,6 +52,7 @@ function DialogOverlay({
   )
 }
 
+/** Renders the main dialog content container. */
 function DialogContent({
   className,
   children,
@@ -81,6 +87,7 @@ function DialogContent({
   )
 }
 
+/** Renders the header section of the dialog. */
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -91,6 +98,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Renders the footer actions of the dialog. */
 function DialogFooter({
   className,
   showCloseButton = false,
@@ -118,6 +126,7 @@ function DialogFooter({
   )
 }
 
+/** Renders the accessible title of the dialog. */
 function DialogTitle({
   className,
   ...props
@@ -131,6 +140,7 @@ function DialogTitle({
   )
 }
 
+/** Renders supporting descriptive text for the dialog. */
 function DialogDescription({
   className,
   ...props

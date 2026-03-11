@@ -9,6 +9,7 @@ import { env } from "@/env";
 import { db } from "@/server/db";
 import { logger } from "@/lib/logger";
 
+/** Configured Better Auth instance for application authentication flows. */
 export const auth = betterAuth({
   database: prismaAdapter(db, {
     provider: "postgresql", // or "sqlite" or "mysql"

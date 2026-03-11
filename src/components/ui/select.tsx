@@ -6,24 +6,28 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/** Renders the root select container. */
 function Select({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Root>) {
   return <SelectPrimitive.Root data-slot="select" {...props} />
 }
 
+/** Renders a grouped section within the select menu. */
 function SelectGroup({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Group>) {
   return <SelectPrimitive.Group data-slot="select-group" {...props} />
 }
 
+/** Renders the selected value within the trigger. */
 function SelectValue({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Value>) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />
 }
 
+/** Renders the trigger button for the select. */
 function SelectTrigger({
   className,
   children,
@@ -46,6 +50,7 @@ function SelectTrigger({
   )
 }
 
+/** Renders the scroll-up affordance for long select menus. */
 function SelectScrollUpButton({
   className,
   ...props
@@ -64,6 +69,7 @@ function SelectScrollUpButton({
   )
 }
 
+/** Renders the scroll-down affordance for long select menus. */
 function SelectScrollDownButton({
   className,
   ...props
@@ -82,6 +88,7 @@ function SelectScrollDownButton({
   )
 }
 
+/** Renders the floating content panel for the select menu. */
 function SelectContent({
   className,
   children,
@@ -117,6 +124,7 @@ function SelectContent({
   )
 }
 
+/** Renders a label inside the select menu. */
 function SelectLabel({
   className,
   ...props
@@ -130,6 +138,7 @@ function SelectLabel({
   )
 }
 
+/** Renders a selectable item within the select menu. */
 function SelectItem({
   className,
   children,
@@ -155,6 +164,7 @@ function SelectItem({
   )
 }
 
+/** Renders a separator between select menu items. */
 function SelectSeparator({
   className,
   ...props

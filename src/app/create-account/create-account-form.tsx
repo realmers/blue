@@ -188,7 +188,7 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
   };
 
   return (
-    <form className="space-y-8" onSubmit={handleSubmit}>
+    <form className="space-y-4" onSubmit={handleSubmit}>
       {error && (
         <div className="rounded-md bg-red-50 p-4 text-sm text-red-600">
           {error}
@@ -263,7 +263,7 @@ export function CreateAccountForm({ defaultEmail, defaultName, defaultSurname }:
             Personuppgifter
           </CardTitle>
           <CardDescription>
-            Vem är du?
+            Fyll i personuppgifter.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">

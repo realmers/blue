@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+/** Renders the site footer with navigation and contact information. */
 export const Footer = () => {
   return (
     /*  Footer container */
