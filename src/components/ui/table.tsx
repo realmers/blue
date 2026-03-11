@@ -4,6 +4,7 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/** Renders a responsive table wrapper and table element. */
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
     <div
@@ -19,6 +20,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
   )
 }
 
+/** Renders the header section of a table. */
 function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
@@ -29,6 +31,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   )
 }
 
+/** Renders the body section of a table. */
 function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   return (
     <tbody
@@ -39,6 +42,7 @@ function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   )
 }
 
+/** Renders the footer section of a table. */
 function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   return (
     <tfoot
@@ -52,6 +56,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
   )
 }
 
+/** Renders a row within the table. */
 function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   return (
     <tr
@@ -65,6 +70,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   )
 }
 
+/** Renders a header cell within the table. */
 function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
@@ -78,6 +84,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   )
 }
 
+/** Renders a standard data cell within the table. */
 function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   return (
     <td
@@ -91,6 +98,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   )
 }
 
+/** Renders a caption for the table. */
 function TableCaption({
   className,
   ...props

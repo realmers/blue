@@ -63,6 +63,7 @@ const globalForPrisma = globalThis as unknown as {
   prisma: ReturnType<typeof createPrismaClient> | undefined;
 };
 
+/** Shared Prisma client instance for database access across the app. */
 export const db = globalForPrisma.prisma ?? createPrismaClient();
 
 if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;

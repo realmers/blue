@@ -6,6 +6,7 @@ const globalForLogger = globalThis as unknown as { logger: pino.Logger };
 
 const isDev = env.NODE_ENV === 'development';
 
+/** Shared application logger */
 export const logger =
   globalForLogger.logger ||
   pino({

@@ -29,4 +29,5 @@ const handler = (req: NextRequest) =>
     },
   });
 
+/** Handles GET and POST requests for the tRPC API endpoint. */
 export { handler as GET, handler as POST };

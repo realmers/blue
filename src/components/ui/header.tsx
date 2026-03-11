@@ -4,6 +4,7 @@ import Link from "next/link";
 import { authClient } from "@/server/better-auth/client";
 import { useRouter } from "next/navigation";
 
+/** Renders the site header with navigation and session actions. */
 export const Header = () => {
   const router = useRouter();
 

@@ -4,6 +4,7 @@ import {
 } from "@tanstack/react-query";
 import SuperJSON from "superjson";
 
+/** Creates a React Query client configured for the app's SSR and hydration needs. */
 export const createQueryClient = () =>
   new QueryClient({
     defaultOptions: {
