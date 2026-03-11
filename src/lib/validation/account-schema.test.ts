@@ -5,7 +5,6 @@
  * lösenord och e-post fungerar som tänkt,
  * och att ogiltiga data fångas upp innan de når servern.
  *
- * Tillhör Logic Layer.
  */
 
 import { describe, it, expect } from "vitest";
