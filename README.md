@@ -7,7 +7,18 @@ IV1201 project
 Blå Lund Recruitment App is a school project in the course "Arkitektur och design av globala applikationer" at KTH.
 The system distinguishes between two types of users: applicants and recruiters. An applicant applies for a position within the company while a recruiter manages applications. The system covers two main areas: the registration of job applications and the administration of applications.
 
-The project is built on Next.js and tRPC and deployed on Vercel with a PostgreSQL database hosted on Supabase.
+## Screenshots
+
+### Applicant Registration
+![Applicant Registration](public/screenshots/Applicant_Page.jpg)
+
+### Applications Overview
+![Applications Overview](public/screenshots/Recruiter_Main_Page.jpg)
+
+### Application Details
+![Application Details](public/screenshots/Recruiter_Details_Page.jpg)
+
+
 
 ## How to run
 
